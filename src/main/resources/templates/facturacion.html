@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Facturación - Punto de Venta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+
+.check-large {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #006aff;
+}
+
+.check-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+</style>
+
+</head>
+<body>
+
+<div class="layout">
+
+  
+    <aside class="sidebar-modern">
+
+         <div class="brand-box">
+            <div class="brand-avatar">PV</div>
+            <div>
+              <strong class="brand-user" id="brandUserName">Usuario</strong>
+<small id="brandUserRol"></small>
+
+                <small>Sistema Punto de Venta</small>
+                <small>La Carpita</small>
+            </div>
+        </div>
+
+     <nav class="menu-modern">
+    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
+    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
+    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
+    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
+    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
+    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
+    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
+    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
+    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
+    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
+    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
+    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
+    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
+    <a id="menuFacturacion" href="/facturacion" class="item active"><i class="bi bi-receipt"></i> Facturación</a>
+    
+</nav>
+
+
+       <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </a>
+</div>
+
+
+    </aside>
+
+   
+    <main class="content">
+
+        <div class="content-header">
+            <h1>Facturación</h1>
+            <small>Generación de facturas del sistema.</small>
+        </div>
+
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div>
+                    <h3>Crear factura</h3>
+                    <button class="btn btn-primary" onclick="abrirModal('modalFactura')">
+                    <i class="bi bi-plus-circle"></i> Nueva factura
+                </button>
+                <button class="btn btn-secondary" onclick="abrirReporteFacturas()">
+    <i class="bi bi-graph-up"></i> Reporte de facturas
+</button>
+
+                </div>
+
+            </div>
+
+            <h3 class="mt-20">Facturas generadas</h3>
+
+            <table id="tablaFacturas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Venta</th>
+                        <th>Cliente</th>
+                        <th>Razón Social</th>
+                        <th>RFC</th>
+                        <th>Uso CFDI</th>
+                        <th>Total</th>
+                        <th>Timbrado</th>
+                        <th>Fecha</th>
+                        <th>Estado</th> <!-- NUEVA -->
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr><td colspan="10">Sin facturas aún.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+
+<div class="modal-overlay" id="modalFactura">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Nueva factura</h3>
+            <button class="modal-close" onclick="cerrarModal('modalFactura')">&times;</button>
+        </div>
+
+        <!-- FORMULARIO (MISMO QUE TENÍAS, SOLO DENTRO DEL MODAL) -->
+        <label>Selecciona una venta</label>
+        <select id="factVenta">
+            <option value="">Seleccione...</option>
+        </select>
+
+        <label class="mt-10">Cliente</label>
+        <select id="factCliente">
+            <option value="">Seleccione un cliente...</option>
+        </select>
+
+        <label class="mt-10">RFC</label>
+        <input id="factRFC" placeholder="XAXX010101000">
+
+        <label class="mt-10">Razón Social</label>
+        <input id="factRazon" placeholder="Razón social o nombre fiscal">
+
+        <label class="mt-10">Uso de CFDI</label>
+        <select id="factUso">
+            <option value="G01">G01 - Adquisición de mercancías</option>
+            <option value="G02">G02 - Gastos en general</option>
+            <option value="P01">P01 - Por definir</option>
+        </select>
+
+        <label class="mt-10">Timbrado</label>
+        <div style="display:flex;align-items:center;gap:15px;margin-top:5px;">
+            <input type="checkbox" id="factTimbrado" class="check-large">
+            <span class="check-label">¿Factura timbrada?</span>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal('modalFactura')">Cancelar</button>
+            <button class="btn btn-primary" onclick="generarFactura()">
+                <i class="bi bi-receipt"></i> Generar factura
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalReporteFacturas">
+    <div class="modal-box" style="width:900px">
+
+        <div class="modal-header">
+            <h3>Reporte de Facturación</h3>
+            <button class="modal-close"
+                    onclick="cerrarModal('modalReporteFacturas')">&times;</button>
+        </div>
+
+
+        <div class="grid-4">
+            <div class="kpi-card">
+                <h4>Total facturado</h4>
+                <strong id="kpiTotalFacturado">$0</strong>
+            </div>
+
+            <div class="kpi-card">
+                <h4>Facturas activas</h4>
+                <strong id="kpiFacturasActivas">0</strong>
+            </div>
+
+            <div class="kpi-card">
+                <h4>Facturas canceladas</h4>
+                <strong id="kpiFacturasCanceladas">0</strong>
+            </div>
+
+            <div class="kpi-card danger">
+                <h4>Total cancelado</h4>
+                <strong id="kpiTotalCancelado">$0</strong>
+            </div>
+        </div>
+
+        <div class="row mt-10">
+            <div class="col-4">
+                <label>Fecha inicio</label>
+                <input type="date" id="repInicio">
+            </div>
+            <div class="col-4">
+                <label>Fecha fin</label>
+                <input type="date" id="repFin">
+            </div>
+            <div class="col-4" style="padding-top:22px;">
+                <button class="btn btn-primary" onclick="filtrarReporteFacturas()">
+                    Filtrar
+                </button>
+            </div>
+        </div>
+
+        <table class="mt-10" id="tablaReporteFacturas">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5">Sin datos</td></tr>
+            </tbody>
+        </table>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary"
+                    onclick="cerrarModal('modalReporteFacturas')">
+                Cerrar
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="js/core.js"></script>
+<script src="js/facturacion.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pedidos - Punto de Venta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+</head>
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar-modern">
+         <div class="brand-box">
+            <div class="brand-avatar">PV</div>
+            <div>
+              <strong class="brand-user" id="brandUserName">Usuario</strong>
+<small id="brandUserRol"></small>
+
+                <small>Sistema Punto de Venta</small>
+                <small>La Carpita</small>
+            </div>
+        </div>
+
+      <nav class="menu-modern">
+    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
+    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
+    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
+    <a id="menuPedidos" href="/pedidos" class="item active"><i class="bi bi-people"></i> Pedidos</a>
+    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
+    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
+    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
+    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
+    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
+    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
+    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
+    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
+    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
+    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
+    
+</nav>
+
+
+        <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </a>
+</div>
+
+    </aside>
+
+   
+    <main class="content">
+
+        <div class="content-header">
+            <h1>Pedidos (Take Out / Delivery)</h1>
+            <small>Control de pedidos para recoger o entregar.</small>
+        </div>
+
+        <div class="card">
+            <div class="acciones-bar">
+    <button class="btn btn-primary" onclick="abrirModalPedido()">
+        <i class="bi bi-plus-circle"></i> Nuevo pedido
+    </button>
+
+    <button class="btn btn-info" onclick="abrirModalReportesPedidos()">
+        <i class="bi bi-bar-chart"></i> Reportes
+    </button>
+</div>
+
+<div class="buscador-card">
+    <div class="buscador-header">
+        <strong>Buscar pedidos</strong>
+        <button class="btn btn-light btn-sm" onclick="pedidosHoy()">
+            <i class="bi bi-calendar-event"></i> Hoy
+        </button>
+    </div>
+
+    <div class="buscador-body">
+        <input type="date" id="filtroFechaPedido">
+
+        <button class="btn btn-primary" onclick="buscarPedidosPorFecha()">
+            <i class="bi bi-search"></i> Buscar
+        </button>
+
+        <button class="btn btn-secondary" onclick="cargarPedidos()">
+            <i class="bi bi-arrow-clockwise"></i> Todas
+        </button>
+    </div>
+</div>
+
+            <h3 class="mt-10">Listado de pedidos</h3>
+
+            <table id="tablaPedidos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Fecha / Hora</th>
+                        <th>Estado</th>
+                        <th>Dirección / Notas</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="7">Cargando...</td></tr>
+                </tbody>
+            </table>
+
+
+    </main>
+</div>
+
+
+
+<div class="modal-overlay" id="modalPedido">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Nuevo Pedido</h3>
+            <button class="modal-close" onclick="cerrarModal('modalPedido')">&times;</button>
+        </div>
+
+        <label>Cliente</label>
+        <select id="pedCliente"></select>
+
+        <label class="mt-10">Estado</label>
+        <select id="pedEstado">
+    <option value="Pendiente">Pendiente</option>
+    <option value="Preparando">Preparando</option>
+    <option value="En camino">En camino</option>
+    <option value="Entregado">Entregado</option>
+</select>
+
+
+    
+        <label class="mt-10">Dirección / Notas</label>
+        <textarea id="pedNotas" placeholder="Dirección o notas del pedido..."></textarea>
+
+        <hr class="mt-10">
+
+  
+        <h4>Productos del pedido</h4>
+
+        <label>Producto</label>
+        <select id="pedProducto"></select>
+
+        <label class="mt-10">Cantidad</label>
+        <input type="number" id="pedCantidad" value="1" min="1">
+
+        <button class="btn btn-primary mt-10" onclick="agregarProductoPedido()">
+            <i class="bi bi-cart-plus"></i> Agregar producto
+        </button>
+
+        <table class="mt-10" id="tablaDetallePedido">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cant</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3 class="mt-10">Total: $<span id="pedTotal">0.00</span></h3>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal('modalPedido')">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardarPedido()">Guardar</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalDetallePedido">
+    <div class="modal-box">
+        
+        <div class="modal-header">
+            <h3>Detalle del Pedido</h3>
+            <button class="modal-close" onclick="cerrarModal('modalDetallePedido')">&times;</button>
+        </div>
+
+        <div id="detallePedidoInfo" class="info-box" style="margin-bottom:10px;">
+            Cargando información...
+        </div>
+
+        <table id="detallePedidoTabla">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4">Cargando...</td></tr>
+            </tbody>
+        </table>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal('modalDetallePedido')">Cerrar</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalReportesPedidos">
+    <div class="modal-box modal-lg">
+
+        <div class="modal-header">
+            <h3><i class="bi bi-bar-chart"></i> Reportes de Pedidos</h3>
+            <button class="modal-close" onclick="cerrarModal('modalReportesPedidos')">&times;</button>
+        </div>
+
+
+        <div class="kpi-grid">
+
+            <div class="kpi-card green">
+                <div class="kpi-icon"><i class="bi bi-cash"></i></div>
+                <div>
+                    <small>Total pedidos ($)</small>
+                    <h2 id="repPedTotal">$0.00</h2>
+                </div>
+            </div>
+
+            <div class="kpi-card blue">
+                <div class="kpi-icon"><i class="bi bi-box"></i></div>
+                <div>
+                    <small>Pedidos realizados</small>
+                    <h2 id="repPedCantidad">0</h2>
+                </div>
+            </div>
+
+            <div class="kpi-card red">
+                <div class="kpi-icon"><i class="bi bi-x-circle"></i></div>
+                <div>
+                    <small>Pedidos cancelados</small>
+                    <h2 id="repPedCancelados">0</h2>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <div>
+                <label>Desde</label>
+                <input type="date" id="repPedInicio">
+            </div>
+
+            <div>
+                <label>Hasta</label>
+                <input type="date" id="repPedFin">
+            </div>
+
+            <button class="btn btn-primary" style="align-self:end;"
+                onclick="cargarReportePedidosPeriodo()">
+                <i class="bi bi-search"></i> Generar reporte
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script src="js/core.js"></script>
+<script src="js/pedidos.js"></script>
+
+</body>
+</html>

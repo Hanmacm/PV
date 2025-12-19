@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Productos - Punto de Venta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+</head>
+<body>
+
+<div class="layout">
+
+ 
+ <aside class="sidebar-modern">
+
+       <div class="brand-box">
+            <div class="brand-avatar">PV</div>
+            <div>
+              <strong class="brand-user" id="brandUserName">Usuario</strong>
+<small id="brandUserRol"></small>
+
+                <small>Sistema Punto de Venta</small>
+                <small>La Carpita</small>
+            </div>
+        </div>
+
+       <nav class="menu-modern">
+    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
+    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
+    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
+    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
+    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
+    <a id="menuProductos" href="/productos" class="item active"><i class="bi bi-box"></i> Productos</a>
+    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
+    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
+    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
+    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
+    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
+    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
+    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
+    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
+    
+</nav>
+
+
+     <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </a>
+</div>
+
+
+    </aside>
+   
+    <main class="content">
+
+        <div class="content-header">
+            <h1>Productos</h1>
+            <small>Gestión de catálogo de productos.</small>
+        </div>
+
+        <div class="card">
+
+      <button class="btn btn-primary" onclick="abrirModalProducto()">
+    <i class="bi bi-plus-circle"></i> Nuevo producto
+</button>
+<div class="row mt-10" style="gap:10px;align-items:end;">
+    <input id="filtroTexto" placeholder="Buscar producto...">
+
+    <select id="filtroEstado">
+        <option value="">Todos</option>
+        <option value="ACTIVO">Activos</option>
+        <option value="INACTIVO">Inactivos</option>
+    </select>
+
+    <button class="btn btn-primary btn-sm" onclick="buscarProductos()">
+        <i class="bi bi-search"></i> Buscar
+    </button>
+
+    <button class="btn btn-secondary btn-sm" onclick="cargarProductos()">
+        <i class="bi bi-arrow-clockwise"></i> Limpiar
+    </button>
+<button class="btn btn-dark btn-sm" onclick="cargarReporteProductos()">
+  <i class="bi bi-bar-chart"></i> Reporte
+</button>
+
+
+</div>
+
+            <h3 class="mt-10">Listado de productos</h3>
+
+            <table id="tablaProductos">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Código</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6">Sin productos aún.</td></tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </main>
+</div>
+
+
+<div class="modal-overlay" id="modalProducto">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="prodTitulo">Nuevo Producto</h3>
+            <button onclick="cerrarModal('modalProducto')" class="modal-close">&times;</button>
+        </div>
+
+        <input type="hidden" id="prodId">
+
+        <label>Nombre</label>
+        <input id="prodNombre">
+
+        <label>Categoría</label>
+        <input id="prodCategoria">
+
+        <label>Precio</label>
+        <input type="number" id="prodPrecio">
+
+        <label>Stock</label>
+        <input type="number" id="prodStock">
+
+        <label>Código</label>
+        <input id="prodCodigo">
+
+        <label>Descripción</label>
+        <textarea id="prodDescripcion"></textarea>
+
+        <div class="modal-footer">
+            <button onclick="cerrarModal('modalProducto')" class="btn btn-secondary">Cancelar</button>
+            <button onclick="guardarProducto()" class="btn btn-primary">Guardar</button>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="modalReporteProductos">
+  <div class="modal-box" style="max-width:520px">
+
+    <div class="modal-header">
+      <h3>Reporte de Productos</h3>
+      <button class="modal-close" onclick="cerrarModal('modalReporteProductos')">&times;</button>
+    </div>
+
+    <div class="kpi-grid mt-10">
+
+      <div class="kpi-card kpi-blue">
+        <small>Total productos</small>
+        <h3 id="repTotalProductos">0</h3>
+      </div>
+
+      <div class="kpi-card kpi-success">
+        <small>Activos</small>
+        <h3 id="repActivos">0</h3>
+      </div>
+
+      <div class="kpi-card kpi-secondary">
+        <small>Inactivos</small>
+        <h3 id="repInactivos">0</h3>
+      </div>
+
+      <div class="kpi-card kpi-danger">
+        <small>Stock bajo</small>
+        <h3 id="repStockBajo">0</h3>
+      </div>
+
+      <div class="kpi-card kpi-green">
+        <small>Valor inventario</small>
+        <h3 id="repValorInventario">$0.00</h3>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cerrarModal('modalReporteProductos')">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="/js/core.js"></script>
+<script src="/js/productos.js"></script>
+
+
+</body>
+</html>

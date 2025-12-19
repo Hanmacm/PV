@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cajas - Punto de Venta</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar-modern">
+
+        <div class="brand-box">
+            <div class="brand-avatar">PV</div>
+            <div>
+              <strong class="brand-user" id="brandUserName">Usuario</strong>
+<small id="brandUserRol"></small>
+
+                <small>Sistema Punto de Venta</small>
+                <small>La Carpita</small>
+            </div>
+        </div>
+
+       <nav class="menu-modern">
+    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
+    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
+    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
+    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
+    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
+    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
+    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
+    <a id="menuCajas" href="/cajas" class="item active"><i class="bi bi-cash-stack"></i> Cajas</a>
+    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
+    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
+    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
+    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
+    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
+    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
+    
+</nav>
+
+<div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+    </a>
+</div>
+
+
+    </aside>
+
+    <main class="content">
+
+        <div class="content-header">
+            <h1>Cajas</h1>
+            <small>Apertura, cierre y movimientos de caja.</small>
+        </div>
+
+        <div class="card">
+            <h2>Gestión de caja</h2>
+
+            <button class="btn btn-primary" onclick="abrirModal('modalCaja')">
+                <i class="bi bi-cash-stack"></i> Abrir gestor de caja
+            </button>
+            <button class="btn btn-dark btn-sm" onclick="abrirReporteCajas()">
+    <i class="bi bi-bar-chart"></i> Reporte
+</button>
+
+        </div>
+
+        <div class="card mt-10">
+            <h3>Movimientos de caja</h3>
+
+            <table id="tablaMovimientos">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Monto</th>
+                        <th>Concepto</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4">Sin movimientos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card mt-10">
+            <h3>Historial de cajas</h3>
+
+            <table id="tablaCajas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Monto Inicial</th>
+                        <th>Monto Final</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6">Sin registros.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+<div class="modal-overlay" id="modalCaja">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Caja</h3>
+            <button class="modal-close" onclick="cerrarModal('modalCaja')">&times;</button>
+        </div>
+
+        <h3>Caja actual:</h3>
+        <p id="cajaActualLabel">No hay caja abierta</p>
+
+        <div class="row mt-10">
+            <div class="col-4">
+                <label>Monto inicial</label>
+                <input type="number" id="cajaMontoInicial" min="0" step="0.01">
+            </div>
+            <div class="col-4" style="padding-top:22px;">
+                <button class="btn btn-primary" onclick="abrirCaja()">
+                    <i class="bi bi-unlock"></i> Abrir caja
+                </button>
+            </div>
+            <div class="col-4" style="padding-top:22px;">
+                <button class="btn btn-danger" onclick="cerrarCaja()">
+                    <i class="bi bi-lock"></i> Cerrar caja
+                </button>
+            </div>
+        </div>
+
+        <h3 class="mt-10">Registrar movimiento</h3>
+
+        <div class="row">
+            <div class="col-4">
+                <label>Tipo</label>
+                <select id="cajaTipoMov">
+                    <option value="Entrada">Entrada</option>
+                    <option value="Salida">Salida</option>
+                </select>
+            </div>
+
+            <div class="col-4">
+                <label>Monto</label>
+                <input type="number" id="cajaMontoMov" min="0" step="0.01">
+            </div>
+
+            <div class="col-4">
+                <label>Concepto</label>
+                <input id="cajaConcepto">
+            </div>
+        </div>
+
+        <button class="btn btn-secondary mt-5" onclick="agregarMovimiento()">
+            <i class="bi bi-plus-circle"></i> Agregar movimiento
+        </button>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal('modalCaja')">Cerrar</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalleCaja">
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Detalle de Caja</h3>
+            <button class="modal-close" onclick="cerrarModal('modalDetalleCaja')">&times;</button>
+        </div>
+
+        <table id="tablaDetalleCaja">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                    <th>Concepto</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4">Sin movimientos</td></tr>
+            </tbody>
+        </table>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal('modalDetalleCaja')">
+                Cerrar
+            </button>
+        </div>
+
+    </div>
+</div>
+<div class="modal-overlay" id="modalReporteCajas">
+  <div class="modal-box" style="max-width:600px">
+
+    <div class="modal-header">
+      <h3>Reporte de Cajas</h3>
+      <button class="modal-close" onclick="cerrarModal('modalReporteCajas')">&times;</button>
+    </div>
+
+    <div class="kpi-grid mt-10">
+
+      <div class="kpi-card"><small>Total cajas</small><h3 id="kpiTotalCajas">0</h3></div>
+      <div class="kpi-card"><small>Abiertas</small><h3 id="kpiAbiertas">0</h3></div>
+      <div class="kpi-card"><small>Cerradas</small><h3 id="kpiCerradas">0</h3></div>
+
+      <div class="kpi-card kpi-green"><small>Entradas</small><h3 id="kpiEntradas">$0</h3></div>
+      <div class="kpi-card kpi-danger"><small>Salidas</small><h3 id="kpiSalidas">$0</h3></div>
+      <div class="kpi-card kpi-blue"><small>Balance</small><h3 id="kpiBalance">$0</h3></div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function abrirModal(id){
+    document.getElementById(id).classList.add("show");
+}
+
+function cerrarModal(id){
+    document.getElementById(id).classList.remove("show");
+}
+</script>
+
+
+<script src="js/core.js"></script>
+<script src="js/cajas.js"></script>
+
+</body>
+</html>

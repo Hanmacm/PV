@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login - La Carpita</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+</head>
+<body>
+
+<div class="login-container">
+
+    <div class="login-panel">
+        <div class="logo-icon">
+            <i class="bi bi-shop"></i>
+        </div>
+
+        <h2>Bienvenido</h2>
+        <p class="subtitle">Sistema Punto de Venta</p>
+
+        <div id="msgError" class="error"></div>
+
+        <label>Usuario</label>
+        <input id="loginUser">
+
+        <label>Contraseña</label>
+        <input id="loginPass" type="password" placeholder="●●●●●">
+
+        <button onclick="iniciar()" class="btn-login">Iniciar sesión</button>
+
+        <div class="login-footer">
+            <label class="remember">
+                <input id="loginRecordarme" type="checkbox"> Recordarme
+            </label>
+
+            <a href="#" onclick="abrirModal()">¿Olvidaste tu contraseña?</a>
+        </div>
+    </div>
+
+</div>
+
+<div id="modalRecuperar" class="modal-fondo">
+    <div class="modal-box">
+        <h3>Recuperar contraseña</h3>
+        <p>Ingresa tu usuario para enviar instrucciones de recuperación.</p>
+
+        <input id="recUser" placeholder="Usuario">
+
+        <button class="btn-login" onclick="recuperarPass()">
+            Enviar instrucciones
+        </button>
+
+        <button class="btn-close" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+
+<script src="js/login.js"></script>
+
+</body>
+</html>
