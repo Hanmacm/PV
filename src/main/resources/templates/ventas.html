@@ -6,107 +6,87 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="css/PVS.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 </head>
 <body>
 
-<div class="layout">
-
-    <aside class="sidebar-modern">
-
-        <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-<small id="brandUserRol"></small>
-
-                <small>Sistema Punto de Venta</small>
-                <small>La Carpita</small>
-            </div>
-        </div>
-
-      <nav class="menu-modern">
-    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-    <a id="menuVentas" href="/ventas" class="item  active"><i class="bi bi-shop"></i> Ventas</a>
-    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
-    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
-    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
-    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
-    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
     
-</nav>
+    <div class="brand-box">
+        <div class="brand-avatar">PV</div>
+        <div class="brand-info">
+            <strong class="brand-user" id="brandUserName">Administrador</strong>
+            <small>Sistema Punto de Venta</small>
+            <small>La Carpita</small>
+        </div>
+    </div>
 
+    <nav class="menu-modern">
+        <a href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+        <a href="/ventas" class="item active"><i class="bi bi-shop"></i><span>Ventas</span></a>
+        <a href="/cotizaciones" class="item"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+        <a href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+        <a href="/compras" class="item"><i class="bi bi-cart"></i><span>Compras</span></a>
+        <a href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+        <a href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+        <a href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+        <a href="/usuarios" class="item"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+        <a href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+        <a href="/consultas" class="item"><i class="bi bi-search"></i><span>Consultas</span></a>
+        <a href="/reportes" class="item"><i class="bi bi-file-earmark"></i><span>Reportes</span></a>
+        <a href="/estadisticas" class="item"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+        <a href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+    </nav>
 
-        <div class="logout-box">
-    <a href="#" onclick="cerrarSesion()" class="logout-btn">
-        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
-</div>
+    <div class="logout-box">
+        <a href="#" onclick="cerrarSesion()" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
 
+</aside>
 
-    </aside>
 
     <main class="content">
-        <div class="content-header">
-            <h1>Ventas</h1>
-            <small>Generación de tickets y cobros.</small>
-        </div>
 
-        <div class="card">
-            <h2>Punto de Venta</h2>
-            <p style="font-size:12px;margin-bottom:8px;">
-                Caja actual: <strong id="ventaCajaActual">Sin caja abierta</strong>
-            </p>
+    <header class="topbar-app">
 
-<div class="action-bar">
-
-  <div class="action-left">
-    <button class="btn btn-primary" onclick="abrirModal('modalVentas')">
-      <i class="bi bi-bag-plus"></i> Crear nueva venta
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
     </button>
 
-    <button class="btn btn-outline" onclick="abrirModalReportes()">
-      <i class="bi bi-bar-chart-line"></i> Ver reportes
-    </button>
-  </div>
+    <div class="topbar-title">
+        <h1>Ventas</h1>
+        <small>Generación de tickets y cobros</small>
+    </div>
 
-<div class="buscador-card">
+    <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="abrirModal('modalVentas')">
+            <i class="bi bi-bag-plus"></i> Nueva venta
+        </button>
 
-  <div class="buscador-header">
-    <span class="buscador-title">Buscar venta</span>
+        <button class="btn btn-outline" onclick="abrirModalReportes()">
+            <i class="bi bi-bar-chart-line"></i> Reportes
+        </button>
 
-    <button class="btn btn-light" onclick="ventasHoy()">
-      <i class="bi bi-calendar-event"></i> Hoy
-    </button>
-  </div>
+            <button class="btn btn-outline" onclick="abrirModal('modalBuscarVentas')">
+    <i class="bi bi-search"></i> Buscar ventas
+</button>
+    </div>
 
-  <input type="date" id="filtroFechaVenta">
+</header>
 
-  <div class="buscador-actions">
-    <button class="btn btn-primary" onclick="ventasPorFecha()">
-      <i class="bi bi-search"></i> Buscar
-    </button>
-
-    <button class="btn btn-secondary" onclick="cargarVentas()">
-      <i class="bi bi-arrow-clockwise"></i> Todas
-    </button>
-  </div>
-
-</div>
+    <div class="alert-box">
+        Caja actual: <strong id="ventaCajaActual">Sin caja abierta</strong>
+    </div>
 
 
+    <section class="card">
+        <h3>Listado de ventas</h3>
 
-</div>
-            <h3 class="mt-15">Listado de ventas</h3>
-
+        <div class="table-wrapper">
             <table id="tablaVentas">
                 <thead>
                     <tr>
@@ -120,132 +100,190 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody><tr><td colspan="8">Aún no hay ventas registradas.</td></tr></tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="8">Aún no hay ventas registradas.</td>
+                    </tr>
+                </tbody>
             </table>
-
         </div>
-    </main>
-</div>
+    </section>
 
+</main>
 
 <div class="modal-overlay" id="modalVentas">
-  <div class="modal-box" style="max-width:900px; width:95%;">
+  <div class="modal-box modal-venta">
 
-    <div class="modal-header">
+    <div class="modal-header modern">
+      <div>
         <h3>Nueva Venta</h3>
-        <button class="modal-close" onclick="cerrarModal('modalVentas')">&times;</button>
+        <small>
+          Caja actual:
+          <strong id="ventaCajaActualModal">Sin caja abierta</strong>
+        </small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalVentas')">&times;</button>
     </div>
 
-    <h2>Punto de Venta</h2>
-    <p style="font-size:12px;margin-bottom:8px;">
-        Caja actual: <strong id="ventaCajaActualModal">Sin caja abierta</strong>
-    </p>
+    <div class="modal-body">
 
-    <div class="row">
-        <div class="col-6">
-            <h3>Agregar al carrito</h3>
+      <section class="venta-col">
 
-            <label>Producto</label>
-            <select id="ventaProductoModal"></select>
+        <h4><i class="bi bi-cart-plus"></i> Agregar producto</h4>
 
-            <label class="mt-5">Cantidad</label>
-            <input type="number" id="ventaCantidadModal" min="1" value="1">
+        <label>Producto</label>
+        <select id="ventaProductoModal"></select>
 
-            <button class="btn btn-primary mt-5" id="btnVentaAgregarModal">
-                <i class="bi bi-plus-circle"></i> Agregar al carrito
-            </button>
+        <label class="mt-5">Cantidad</label>
+        <input type="number" id="ventaCantidadModal" min="1" value="1">
+
+        <button class="btn btn-primary mt-10" id="btnVentaAgregarModal">
+          <i class="bi bi-plus-circle"></i> Agregar
+        </button>
+
+        <h4 class="mt-15"><i class="bi bi-person"></i> Cliente</h4>
+        <select id="ventaClienteModal"></select>
+
+        <h4 class="mt-15"><i class="bi bi-credit-card"></i> Pago</h4>
+
+   <div class="radio-group">
+  <label><input type="radio" name="ventaMetodoModal" value="efectivo" checked> Efectivo</label>
+  <label><input type="radio" name="ventaMetodoModal" value="tarjeta"> Tarjeta</label>
+  <label><input type="radio" name="ventaMetodoModal" value="transferencia"> Transferencia</label>
+  <label><input type="radio" name="ventaMetodoModal" value="mixto"> Mixto</label>
+</div>
+
+
+        <div class="mt-5" id="bloqueEfectivoModal">
+          <label>Paga con</label>
+          <input type="number" id="ventaPagaConModal" min="0" step="0.01">
         </div>
+<div class="mt-10" id="bloqueMixtoModal" style="display:none">
 
-        <div class="col-6">
-            <h3>Datos de la venta</h3>
+  <label>Monto en efectivo</label>
+  <input type="number" id="mixtoEfectivo" min="0" step="0.01">
 
-            <label>Cliente</label>
-            <select id="ventaClienteModal"></select>
+  <label class="mt-5">Monto en tarjeta</label>
+  <input type="number" id="mixtoTarjeta" min="0" step="0.01">
 
-            <h3 class="mt-5">Método de pago</h3>
+  <label class="mt-5">Monto en transferencia</label>
+  <input type="number" id="mixtoTransferencia" min="0" step="0.01">
 
-            <label><input type="radio" name="ventaMetodoModal" value="efectivo" checked> Efectivo</label>
-            <label><input type="radio" name="ventaMetodoModal" value="tarjeta"> Tarjeta</label>
-            <label><input type="radio" name="ventaMetodoModal" value="transferencia"> Transferencia</label>
+</div>
 
-            <div class="mt-5" id="bloqueEfectivoModal">
-                <label>Cliente paga con</label>
-                <input type="number" id="ventaPagaConModal" min="0" step="0.01">
-            </div>
+        <small id="infoTarjetaModal" style="display:none;">
+          Se aplicará comisión configurada.
+        </small>
+<div class="mt-5" id="bloqueComisionTarjeta" style="display:none">
+  <label>Comisión tarjeta (%)</label>
+  <input
+    type="number"
+    id="comisionTarjetaInput"
+    min="0"
+    step="0.1"
+    value="3"
+  >
+</div>
+<div class="mt-5" id="bloqueImpuesto">
+  <label>Impuesto (%)</label>
+  <input
+    type="number"
+    id="impuestoInput"
+    min="0"
+    step="0.1"
+    value="16"
+  >
+</div>
 
-            <div class="mt-5" id="infoTarjetaModal" style="display:none;font-size:11px;">
-                Se aplicará comisión configurada.
-            </div>
+        <small id="infoTransferenciaModal" style="display:none;">
+          Se mostrarán datos en el ticket.
+        </small>
 
-            <div class="mt-5" id="infoTransferenciaModal" style="display:none;font-size:11px;">
-                Se mostrarán los datos de transferencia en el ticket.
-            </div>
-        </div>
-    </div>
+      </section>
 
-    <h3 class="mt-10">Carrito</h3>
+      <section class="venta-col">
 
-    <table id="tablaCarritoModal">
-        <thead>
-            <tr>
+        <h4><i class="bi bi-receipt"></i> Carrito</h4>
+
+        <div class="carrito-box">
+          <table id="tablaCarritoModal">
+            <thead>
+              <tr>
                 <th>Producto</th>
                 <th>Cant.</th>
-                <th>Precio</th>
                 <th>Importe</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td colspan="5">Sin productos en el carrito.</td></tr>
-        </tbody>
-    </table>
-
-    <div class="row mt-10">
-        <div class="col-6"></div>
-        <div class="col-6">
-            <table>
-                <tr><td>Subtotal</td><td id="ventaSubtotalModal">$0.00</td></tr>
-                <tr><td>Impuesto</td><td id="ventaImpuestoModal">$0.00</td></tr>
-                <tr><td>Comisión tarjeta</td><td id="ventaComisionModal">$0.00</td></tr>
-                <tr><th>Total</th><th id="ventaTotalModal">$0.00</th></tr>
-                <tr><td>Cambio</td><td id="ventaCambioModal">$0.00</td></tr>
-            </table>
-
-            <button class="btn btn-primary mt-5" id="btnVentaCobrarModal">
-                <i class="bi bi-cash-stack"></i> Cobrar / Guardar venta
-            </button>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4">Sin productos</td></tr>
+            </tbody>
+          </table>
         </div>
+
+        <div class="totales-box">
+          <div><span>Subtotal</span><strong id="ventaSubtotalModal">$0.00</strong></div>
+          <div><span>Impuesto</span><strong id="ventaImpuestoModal">$0.00</strong></div>
+          <div><span>Comisión</span><strong id="ventaComisionModal">$0.00</strong></div>
+          <div class="total">
+            <span>Total</span>
+            <strong id="ventaTotalModal">$0.00</strong>
+          </div>
+          <div><span>Cambio</span><strong id="ventaCambioModal">$0.00</strong></div>
+        </div>
+
+        <button class="btn btn-primary btn-cobrar" id="btnVentaCobrarModal">
+          <i class="bi bi-cash-stack"></i> Cobrar venta
+        </button>
+
+      </section>
+
     </div>
 
   </div>
 </div>
+
 
 <div class="modal-overlay" id="modalDetalleVenta">
-  <div class="modal-box" style="max-width:700px">
+  <div class="modal-box modal-detalle">
 
-    <div class="modal-header">
-        <h3>Detalle de Venta</h3>
-        <button class="modal-close" onclick="cerrarModal('modalDetalleVenta')">&times;</button>
+    <div class="modal-header modern">
+      <div>
+        <h3><i class="bi bi-receipt"></i> Detalle de Venta</h3>
+        <small>Información completa del ticket</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalDetalleVenta')">&times;</button>
     </div>
 
-    <div id="detalleVentaInfo" style="font-size:13px;margin-bottom:10px;"></div>
+    <div class="modal-body-detalle">
 
-    <table>
-        <thead>
+      <section class="detalle-info">
+        <div id="detalleVentaInfo"></div>
+      </section>
+
+      <section class="detalle-tabla">
+        <table>
+          <thead>
             <tr>
-                <th>Producto</th>
-                <th>Cant.</th>
-                <th>Precio</th>
-                <th>Subtotal</th>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
             </tr>
-        </thead>
-        <tbody id="detalleVentaTabla">
-            <tr><td colspan="4">Cargando...</td></tr>
-        </tbody>
-    </table>
+          </thead>
+          <tbody id="detalleVentaTabla">
+            <tr>
+              <td colspan="4">Cargando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
 
   </div>
 </div>
+
 
 <div class="modal-overlay" id="modalReportes">
   <div class="modal-box" style="max-width:800px;width:95%">
@@ -307,6 +345,74 @@
 
   </div>
 </div>
+
+
+<div class="modal-overlay" id="modalBuscarVentas">
+  <div class="modal-box modal-busqueda">
+
+    <div class="modal-header modern">
+      <div>
+        <h3><i class="bi bi-search"></i> Buscar ventas</h3>
+        <small>Filtra ventas por fecha o periodo</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalBuscarVentas')">&times;</button>
+    </div>
+
+    <div class="modal-body-busqueda">
+
+      <div class="busqueda-opciones">
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-calendar-event"></i> Ventas de hoy</h4>
+          <button class="btn btn-primary" onclick="ventasHoy(); cerrarModal('modalBuscarVentas')">
+            Ver hoy
+          </button>
+        </div>
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-calendar-range"></i> Por fecha</h4>
+
+          <label>Fecha</label>
+          <input type="date" id="filtroFechaVenta">
+
+          <button class="btn btn-primary mt-10" onclick="ventasPorFecha(); cerrarModal('modalBuscarVentas')">
+            Buscar
+          </button>
+        </div>
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-list-ul"></i> Todas</h4>
+          <button class="btn btn-secondary" onclick="cargarVentas(); cerrarModal('modalBuscarVentas')">
+            Ver todas
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAlertModern">
+  <div class="alert-box" id="alertBox">
+
+    <div class="alert-icon" id="alertIcon">
+      <i class="bi bi-info-circle"></i>
+    </div>
+
+    <div class="alert-content">
+      <h3 id="alertTitle"></h3>
+      <p id="alertMessage"></p>
+    </div>
+
+    <button class="alert-btn" id="alertBtn">
+      Aceptar
+    </button>
+
+  </div>
+</div>
+
 
 <script src="js/core.js"></script>
 <script src="js/ventas.js"></script>
