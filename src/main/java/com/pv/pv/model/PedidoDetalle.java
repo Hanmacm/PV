@@ -15,7 +15,7 @@ public class PedidoDetalle {
 
     @ManyToOne
     @JoinColumn(name = "pedido_id")
-    @JsonBackReference      // ← ***EVITA CICLO***
+    @JsonBackReference     
     private Pedido pedido;
 
     @ManyToOne
