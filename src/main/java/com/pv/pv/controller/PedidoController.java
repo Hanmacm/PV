@@ -72,4 +72,12 @@ public class PedidoController {
     public List<Pedido> porFecha(@RequestParam String fecha) {
         return srv.byDate(LocalDate.parse(fecha));
     }
+    @PutMapping("/{id}")
+public Pedido update(
+        @PathVariable Integer id,
+        @RequestBody PedidoRequest rq
+) {
+    return srv.update(id, rq);
+}
+
 }
