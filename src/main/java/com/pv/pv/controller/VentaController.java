@@ -36,9 +36,10 @@ public class VentaController {
     }
 
     @GetMapping("/fecha")
-    public List<Venta> porFecha(@RequestParam String f) {
+    public List<Venta> porFecha(@RequestParam("fecha") String f) {
         return vSvc.ventasPorFecha(f);
     }
+
 
     @GetMapping("/{id}")
     public Venta obtener(@PathVariable Integer id) {
