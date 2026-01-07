@@ -6,309 +6,302 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="css/PVS.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
 </head>
 <body>
 
-<div class="layout">
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
 
-
-    <aside class="sidebar-modern">
-
-        <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-<small id="brandUserRol"></small>
-
-                <small>Sistema Punto de Venta</small>
-                <small>La Carpita</small>
-            </div>
-        </div>
-
-        <nav class="menu-modern">
-    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
-    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
-    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-    <a id="menuCompras" href="/compras" class="item  active"><i class="bi bi-cart"></i> Compras</a>
-    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
-    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
-    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
-    
-</nav>
-
-
-       <div class="logout-box">
-    <a href="#" onclick="cerrarSesion()" class="logout-btn">
-        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
-</div>
-
-
-    </aside>
-
-    <main class="content">
-
-        <div class="content-header">
-            <h1>Compras</h1>
-            <small>Registrar compras de proveedores.</small>
-        </div>
-
-        <div class="card">
-
-            <button class="btn btn-primary" onclick="abrirModal('modalCompra')">
-    <i class="bi bi-plus-circle"></i> Nueva compra
-</button>
-<div class="row mt-10" style="gap:10px;align-items:end;">
-    <button class="btn btn-success btn-sm" onclick="comprasHoy()">
-        <i class="bi bi-calendar-day"></i> Hoy
-    </button>
-
-    <div>
-        <label style="font-size:11px;">Buscar por fecha</label>
-        <input type="date" id="filtroFechaCompra">
+  <div class="brand-box">
+    <div class="brand-avatar">PV</div>
+    <div class="brand-info">
+      <strong class="brand-user" id="brandUserName">Usuario</strong>
+      <small>Sistema Punto de Venta</small>
+      <small>La Carpita</small>
     </div>
+  </div>
 
-    <button class="btn btn-primary btn-sm" onclick="comprasPorFecha()">
-        <i class="bi bi-search"></i> Buscar
+  <nav class="menu-modern">
+    <a href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="/ventas" class="item"><i class="bi bi-shop"></i><span>Ventas</span></a>
+    <a href="/cotizaciones" class="item"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+    <a href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+    <a href="/compras" class="item active"><i class="bi bi-cart"></i><span>Compras</span></a>
+    <a href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+    <a href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+    <a href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+    <a href="/usuarios" class="item"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+    <a href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+    <a href="/consultas" class="item"><i class="bi bi-search"></i><span>Consultas</span></a>
+    <a href="/reportes" class="item"><i class="bi bi-file-earmark"></i><span>Reportes</span></a>
+    <a href="/estadisticas" class="item"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+    <a href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+  </nav>
+
+  <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+      <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
+    </a>
+  </div>
+
+</aside>
+
+<main class="content">
+
+<header class="topbar-app">
+
+  <button class="hamburger-btn" onclick="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="topbar-title">
+    <h1>Compras</h1>
+    <small>Registro de compras a proveedores</small>
+  </div>
+
+  <div class="topbar-actions">
+    <button class="btn btn-primary" onclick="abrirModal('modalCompra')">
+      <i class="bi bi-cart-plus"></i> Nueva compra
     </button>
 
-    <button class="btn btn-secondary btn-sm" onclick="cargarCompras()">
-        <i class="bi bi-arrow-clockwise"></i> Todas
+    <button class="btn btn-outline" onclick="abrirModalBuscarCompras()">
+      <i class="bi bi-search"></i> Buscar compras
     </button>
 
-    <button class="btn btn-dark btn-sm" onclick="abrirModal('modalReporteCompras')">
-        <i class="bi bi-bar-chart"></i> Reportes
+    <button class="btn btn-outline" onclick="abrirModal('modalReporteCompras')">
+      <i class="bi bi-bar-chart"></i> Reportes
     </button>
-</div>
+  </div>
 
+</header>
 
-            <h3 class="mt-15">Compras registradas</h3>
+<section class="card">
+  <h3>Compras registradas</h3>
 
-            <table id="tablaCompras">
-                <thead>
-                    <tr>
-                        <th>Folio</th>
-                        <th>Proveedor</th>
-                        <th>Total</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
+  <div class="table-wrapper">
+    <table id="tablaCompras">
+      <thead>
+        <tr>
+          <th>Folio</th>
+          <th>Proveedor</th>
+          <th>Total</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="6">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-                <tbody>
-                    <tr><td colspan="5">Sin compras.</td></tr>
-                </tbody>
-            </table>
-
-        </div>
-
-    </main>
-</div>
-
+</main>
 
 <div class="modal-overlay" id="modalCompra">
-    <div class="modal-box">
+  <div class="modal-box modal-venta">
 
-        <div class="modal-header">
-            <h3>Nueva Compra</h3>
-            <button class="modal-close" onclick="cerrarModal('modalCompra')">&times;</button>
-        </div>
+    <div class="modal-header modern">
+      <div>
+        <h3>Nueva compra</h3>
+        <small>Registro de compra a proveedor</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalCompra')">&times;</button>
+    </div>
 
-        <div class="row">
-            <div class="col-4">
-                <label>Proveedor</label>
-                <select id="compProveedor"></select>
-            </div>
+    <div class="modal-body">
 
-            <div class="col-4">
-                <label>Folio de compra</label>
-                <input id="compFolio">
-            </div>
+      <section class="venta-col">
+        <label>Proveedor</label>
+        <select id="compProveedor"></select>
 
-            <div class="col-4">
-                <label>Fecha</label>
-                <input type="date" id="compFecha">
-            </div>
-        </div>
+        <label class="mt-10">Folio</label>
+        <input id="compFolio">
 
-        <h3 class="mt-10">Productos de la compra</h3>
+        <label class="mt-10">Fecha</label>
+        <input type="date" id="compFecha">
+      </section>
 
-        <div class="row">
-            <div class="col-4">
-                <label>Producto</label>
-                <select id="compProducto"></select>
-            </div>
+      <section class="venta-col">
 
-            <div class="col-4">
-                <label>Cantidad</label>
-                <input type="number" id="compCantidad" min="1" value="1">
-            </div>
+        <h4><i class="bi bi-cart-plus"></i> Productos</h4>
 
-            <div class="col-4">
-                <label>Costo unitario</label>
-                <input type="number" id="compCosto" min="0" step="0.01" value="0">
-            </div>
-        </div>
+        <label>Producto</label>
+        <select id="compProducto"></select>
 
-        <button class="btn btn-secondary mt-5" id="btnCompAgregar">
-            <i class="bi bi-plus-circle"></i> Agregar a detalle
+        <label class="mt-5">Cantidad</label>
+        <input type="number" id="compCantidad" min="1" value="1">
+
+        <label class="mt-5">Costo unitario</label>
+        <input type="number" id="compCosto" min="0" step="0.01">
+
+        <button class="btn btn-primary mt-10" id="btnCompAgregar">
+          <i class="bi bi-plus-circle"></i> Agregar
         </button>
 
-        <table id="tablaCompra" class="mt-10">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cant.</th>
-                    <th>Costo</th>
-                    <th>Importe</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="5">Sin productos.</td></tr>
-            </tbody>
-        </table>
-
-        <div class="text-right mt-10">
-            <strong>Total compra: <span id="compTotal">$0.00</span></strong>
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="cerrarModal('modalCompra')">Cancelar</button>
-            <button class="btn btn-primary" id="btnCompGuardar">
-                <i class="bi bi-save"></i> Guardar compra
-            </button>
-        </div>
+      </section>
 
     </div>
-</div>
-<div class="modal-overlay" id="modalDetalleCompra">
-  <div class="modal-box" style="max-width:600px">
 
-    <div class="modal-header">
-      <h3>Detalle de compra</h3>
+    <div class="carrito-box">
+      <table id="tablaCompra">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Costo</th>
+            <th>Importe</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5">Sin productos</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="totales-box">
+      <div class="total">
+        <span>Total</span>
+        <strong id="compTotal">$0.00</strong>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cerrarModal('modalCompra')">Cancelar</button>
+      <button class="btn btn-primary" id="btnCompGuardar">
+        <i class="bi bi-save"></i> Guardar compra
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalleCompra">
+  <div class="modal-box modal-detalle">
+
+    <div class="modal-header modern">
+      <div>
+        <h3><i class="bi bi-eye"></i> Detalle de compra</h3>
+      </div>
       <button class="modal-close" onclick="cerrarModal('modalDetalleCompra')">&times;</button>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cant.</th>
-          <th>Costo</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody id="detalleCompraTabla">
-        <tr><td colspan="4">Cargando...</td></tr>
-      </tbody>
-    </table>
+    <div class="modal-body-detalle">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Costo</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="detalleCompraTabla">
+          <tr><td colspan="4">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalBuscarCompras">
+  <div class="modal-box modal-busqueda">
+
+    <div class="modal-header modern">
+      <div>
+        <h3><i class="bi bi-search"></i> Buscar compras</h3>
+        <small>Filtrar compras</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalBuscarCompras')">&times;</button>
+    </div>
+
+    <div class="modal-body-busqueda">
+
+      <div class="busqueda-opciones">
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-calendar-day"></i> Compras de hoy</h4>
+          <button class="btn btn-primary"
+            onclick="comprasHoy(); cerrarModal('modalBuscarCompras')">
+            Ver hoy
+          </button>
+        </div>
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-calendar-range"></i> Por fecha</h4>
+          <input type="date" id="filtroFechaCompra">
+          <button class="btn btn-primary mt-10"
+            onclick="comprasPorFecha(); cerrarModal('modalBuscarCompras')">
+            Buscar
+          </button>
+        </div>
+
+        <div class="busqueda-card">
+          <h4><i class="bi bi-list-ul"></i> Todas</h4>
+          <button class="btn btn-secondary"
+            onclick="loadCompras(); cerrarModal('modalBuscarCompras')">
+            Ver todas
+          </button>
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 </div>
 
 <div class="modal-overlay" id="modalReporteCompras">
-  <div class="modal-box" style="max-width:520px">
+  <div class="modal-box">
 
-    <div class="modal-header">
-      <h3>Reporte de compras</h3>
+    <div class="modal-header modern">
+      <h3><i class="bi bi-bar-chart"></i> Reportes de compras</h3>
       <button class="modal-close" onclick="cerrarModal('modalReporteCompras')">&times;</button>
     </div>
 
-    <div class="row mt-10">
-      <div class="col-6">
-        <label>Fecha inicio</label>
-        <input type="date" id="repInicio">
+    <div class="kpi-grid">
+      <div class="kpi-card primary">
+        <small>Total compras</small>
+        <h2 id="kpiTotalCompras">0</h2>
       </div>
-      <div class="col-6">
-        <label>Fecha fin</label>
-        <input type="date" id="repFin">
+      <div class="kpi-card success">
+        <small>Monto total</small>
+        <h2 id="kpiMontoTotal">$0.00</h2>
+      </div>
+      <div class="kpi-card danger">
+        <small>Canceladas</small>
+        <h2 id="kpiCanceladas">0</h2>
       </div>
     </div>
 
-    <div class="row mt-10" style="gap:10px">
-      <button class="btn btn-primary btn-sm" onclick="cargarReportePeriodo()">
-        <i class="bi bi-search"></i> Consultar
-      </button>
-
-      <button class="btn btn-secondary btn-sm" onclick="cargarReporteGeneral()">
-        <i class="bi bi-bar-chart"></i> General
-      </button>
-    </div>
-
-<div class="kpi-grid mt-10">
-
-  <div class="kpi-card kpi-blue">
-    <div class="kpi-icon"><i class="bi bi-cart-check"></i></div>
-    <div class="kpi-info">
-      <small>Total compras</small>
-      <h3 id="kpiTotalCompras">0</h3>
-    </div>
-  </div>
-
-  <div class="kpi-card kpi-green">
-    <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
-    <div class="kpi-info">
-      <small>Monto total</small>
-      <h3 id="kpiMontoTotal">$0.00</h3>
-    </div>
-  </div>
-
-  <div class="kpi-card kpi-success">
-    <div class="kpi-icon"><i class="bi bi-check-circle"></i></div>
-    <div class="kpi-info">
-      <small>Registradas</small>
-      <h3 id="kpiRegistradas">0</h3>
-    </div>
-  </div>
-
-  <div class="kpi-card kpi-danger">
-    <div class="kpi-icon"><i class="bi bi-x-circle"></i></div>
-    <div class="kpi-info">
-      <small>Canceladas</small>
-      <h3 id="kpiCanceladas">0</h3>
-    </div>
-  </div>
-
-</div>
-
-    
-
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="cerrarModal('modalReporteCompras')">
-        Cerrar
+    <div class="kpi-filters mt-10">
+      <input type="date" id="repInicio">
+      <input type="date" id="repFin">
+      <button class="btn btn-primary" onclick="cargarReportePeriodo()">
+        Generar
       </button>
     </div>
 
   </div>
 </div>
 
-<script>
-  function abrirModal(id){
-      const el = document.getElementById(id);
-      if (el) el.classList.add("show");
-  }
-
-  function cerrarModal(id){
-      const el = document.getElementById(id);
-      if (el) el.classList.remove("show");
-  }
-</script>
-
+<div class="modal-overlay" id="modalAlertModern">
+  <div class="alert-box" id="alertBox">
+    <div class="alert-icon" id="alertIcon"></div>
+    <div class="alert-content">
+      <h3 id="alertTitle"></h3>
+      <p id="alertMessage"></p>
+    </div>
+    <button class="alert-btn" id="alertBtn">Aceptar</button>
+  </div>
+</div>
 
 <script src="js/core.js"></script>
 <script src="js/compras.js"></script>
-
 
 </body>
 </html>
