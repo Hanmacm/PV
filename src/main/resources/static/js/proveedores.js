@@ -11,6 +11,7 @@ async function loadProv() {
         drawProv();
     } catch (e) {
         console.error(e);
+        alertaError("No se pudieron cargar los proveedores");
     }
 }
 
@@ -21,59 +22,61 @@ function drawProv() {
     tb.innerHTML = "";
 
     if (!provLst || provLst.length === 0) {
-        tb.innerHTML = `<tr><td colspan="7">Sin proveedores aún.</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="7">Sin proveedores registrados</td></tr>`;
         return;
     }
 
     provLst.forEach(p => {
 
-        const st = p.activo === 1
+        const estado = p.activo === 1
             ? `<span class="badge badge-success">Activo</span>`
             : `<span class="badge badge-danger">Inactivo</span>`;
 
-        const btns = p.activo === 1
+        const acciones = p.activo === 1
             ? `
-                <button onclick="editarProveedor(${p.id})" class="btn btn-primary btn-sm">
+                <button class="btn btn-primary btn-sm" onclick="editarProveedor(${p.id})">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button onclick="eliminarProveedor(${p.id})" class="btn btn-danger btn-sm">
+                <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${p.id})">
                     <i class="bi bi-x-circle"></i>
                 </button>
               `
             : `
-                <button onclick="activarProveedor(${p.id})" class="btn btn-success btn-sm">
+                <button class="btn btn-success btn-sm" onclick="activarProveedor(${p.id})">
                     <i class="bi bi-check-circle"></i>
                 </button>
               `;
 
         tb.innerHTML += `
-            <tr>
+            <tr data-id="${p.id}">
                 <td>${p.nombre}</td>
                 <td>${p.empresa ?? ""}</td>
                 <td>${p.telefono ?? ""}</td>
                 <td>${p.correo ?? ""}</td>
                 <td>${p.direccion ?? ""}</td>
-                <td>${st}</td>
-                <td>${btns}</td>
+                <td>${estado}</td>
+                <td>${acciones}</td>
             </tr>
         `;
     });
+    resaltarDesdeConsulta();
+
 }
 
-function openProv() {
+function abrirModalProveedor() {
     provId.value = "";
     provNombre.value = "";
     provEmpresa.value = "";
     provTelefono.value = "";
     provCorreo.value = "";
     provDireccion.value = "";
-    provTitulo.innerText = "Nuevo proveedor";
-    modalProveedor.style.display = "flex";
+    provTitulo.textContent = "Nuevo proveedor";
+    abrirModal("modalProveedor");
 }
 
-function editProv(id) {
+function editarProveedor(id) {
     const p = provLst.find(x => x.id === id);
-    if (!p) return;
+    if (!p) return alertaError("Proveedor no encontrado");
 
     provId.value = p.id;
     provNombre.value = p.nombre;
@@ -82,88 +85,205 @@ function editProv(id) {
     provCorreo.value = p.correo ?? "";
     provDireccion.value = p.direccion ?? "";
 
-    provTitulo.innerText = "Editar proveedor";
-    modalProveedor.style.display = "flex";
+    provTitulo.textContent = "Editar proveedor";
+    abrirModal("modalProveedor");
 }
 
-function closeM(id) {
-    document.getElementById(id).style.display = "none";
-}
+async function guardarProveedor() {
 
-async function saveProv() {
     const id = provId.value;
 
-    const p = {
-        nombre: provNombre.value,
-        empresa: provEmpresa.value,
-        telefono: provTelefono.value,
-        correo: provCorreo.value,
-        direccion: provDireccion.value
+    const data = {
+        nombre: provNombre.value.trim(),
+        empresa: provEmpresa.value.trim(),
+        telefono: provTelefono.value.trim(),
+        correo: provCorreo.value.trim(),
+        direccion: provDireccion.value.trim()
     };
 
-    if (!p.nombre) { alert("El nombre es obligatorio"); return; }
-    if (p.correo && !p.correo.includes("@")) { alert("Correo inválido"); return; }
+    if (!data.nombre)
+        return alertaWarning("El nombre del proveedor es obligatorio");
 
-    const m = id ? "PUT" : "POST";
-    const url = id ? `/api/proveedores/${id}` : "/api/proveedores";
+    if (data.correo && !data.correo.includes("@"))
+        return alertaWarning("Correo inválido");
 
-    await fetch(url, {
-        method: m,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(p)
-    });
+    try {
 
-    closeM("modalProveedor");
-    loadProv();
-}
+        const url = id
+            ? `/api/proveedores/${id}`
+            : `/api/proveedores`;
 
-async function offProv(id) {
-    if (!confirm("¿Desactivar proveedor?")) return;
+        const method = id ? "PUT" : "POST";
 
-    const r = await fetch(`/api/proveedores/${id}`, { method: "DELETE" });
+        const r = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
 
-    if (!r.ok) {
-        const t = await r.text();
-        alert(t);
-        return;
+        if (!r.ok) {
+            const t = await r.text();
+            return alertaError(t || "No se pudo guardar el proveedor");
+        }
+
+        cerrarModal("modalProveedor");
+        await loadProv();
+
+        alertaExito(
+            id
+                ? "Proveedor actualizado correctamente"
+                : "Proveedor registrado correctamente"
+        );
+
+    } catch (e) {
+        console.error(e);
+        alertaError("Error al guardar proveedor");
     }
-
-    loadProv();
 }
 
-async function onProv(id) {
-    await fetch(`/api/proveedores/activar/${id}`, { method: "PUT" });
-    loadProv();
+function eliminarProveedor(id) {
+    alertaConfirmacion(
+        "Desactivar proveedor",
+        "Esre proveedor será desactivado",
+        async () => {
+            try {
+                const r = await fetch(`/api/proveedores/${id}`, { method: "DELETE" });
+                if (!r.ok) {
+                    const t = await r.text();
+                    return alertaError(t || "No se pudo desactivar");
+                }
+                await loadProv();
+                alertaWarning("Proveedor desactivado");
+            } catch (e) {
+                console.error(e);
+                alertaError("Error al desactivar proveedor");
+            }
+        }
+    );
 }
 
-async function findProv() {
-    const t = filtroTexto.value;
+async function activarProveedor(id) {
+    try {
+        const r = await fetch(`/api/proveedores/activar/${id}`, { method: "PUT" });
+        if (!r.ok) {
+            const t = await r.text();
+            return alertaError(t || "No se pudo activar");
+        }
+        await loadProv();
+        alertaExito("Proveedor activado correctamente");
+    } catch (e) {
+        console.error(e);
+        alertaError("Error al activar proveedor");
+    }
+}
+
+async function buscarProveedores() {
+    const t = filtroTexto.value.trim();
     const e = filtroEstado.value;
 
-    const url = `/api/proveedores/buscar?texto=${encodeURIComponent(t)}&estado=${e}`;
+    try {
+        const r = await fetch(
+            `/api/proveedores/buscar?texto=${encodeURIComponent(t)}&estado=${e}`
+        );
 
-    const r = await fetch(url);
-    provLst = await r.json();
-    drawProv();
+        if (!r.ok) {
+            throw new Error("Error en búsqueda");
+        }
+
+        provLst = await r.json();
+        drawProv();
+
+        cerrarModal("modalBuscarProveedor");
+
+    } catch (err) {
+        console.error(err);
+        alertaError("No se pudo realizar la búsqueda");
+    }
 }
 
-function clrFind() {
-    filtroTexto.value = "";
-    filtroEstado.value = "";
-    loadProv();
-}
-
-function xlsProv() {
+function reporteProveedores() {
     window.open("/api/proveedores/reporte", "_blank");
 }
-function abrirModalProveedor(){ openProv(); }
-function editarProveedor(id){ editProv(id); }
-function cerrarModal(id){ closeM(id); }
-function guardarProveedor(){ return saveProv(); }
-function eliminarProveedor(id){ return offProv(id); }
-function activarProveedor(id){ return onProv(id); }
-function buscarProveedores(){ return findProv(); }
-function limpiarBusqueda(){ clrFind(); }
-function reporteProveedores(){ xlsProv(); }
-function cargarProveedores(){ return loadProv(); }
-function renderProveedores(){ drawProv(); }
+
+function alerta(tipo, titulo, mensaje) {
+
+    const modal = document.getElementById("modalAlertModern");
+    const box   = document.getElementById("alertBox");
+    const icon  = document.getElementById("alertIcon");
+    const title = document.getElementById("alertTitle");
+    const msg   = document.getElementById("alertMessage");
+    const btn   = document.querySelector("#modalAlertModern .alert-btn");
+
+    if (!modal || !box || !icon || !title || !msg || !btn) {
+        return alert(`${titulo}\n${mensaje}`);
+    }
+
+    box.className = `alert-box alert-${tipo}`;
+
+    const icons = {
+        info: "bi-info-circle",
+        success: "bi-check-circle",
+        warning: "bi-exclamation-triangle",
+        error: "bi-x-circle"
+    };
+
+    icon.innerHTML = `<i class="bi ${icons[tipo] || icons.info}"></i>`;
+    title.textContent = titulo;
+    msg.textContent = mensaje;
+
+    abrirModal("modalAlertModern");
+
+    btn.onclick = () => cerrarModal("modalAlertModern");
+}
+
+
+const alertaInfo    = m => alerta("info", "Información", m);
+const alertaExito   = m => alerta("success", "Éxito", m);
+const alertaWarning = m => alerta("warning", "Atención", m);
+const alertaError   = m => alerta("error", "Error", m);
+
+function alertaConfirmacion(titulo, mensaje, onAceptar) {
+
+    alerta("warning", titulo, mensaje);
+
+    const btn = document.querySelector("#modalAlertModern .alert-btn");
+
+    btn.onclick = () => {
+        cerrarModal("modalAlertModern");
+        if (typeof onAceptar === "function") onAceptar();
+    };
+}
+
+function abrirModalBuscarProveedores() {
+    abrirModal("modalBuscarProveedor");
+}
+function limpiarBusqueda() {
+    const filtroTexto = document.getElementById("filtroTexto");
+    const filtroEstado = document.getElementById("filtroEstado");
+
+    if (filtroTexto) filtroTexto.value = "";
+    if (filtroEstado) filtroEstado.value = "";
+
+    loadProv();
+    cerrarModal("modalBuscarProveedor");
+}
+function resaltarDesdeConsulta() {
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("resaltar");
+
+    if (!id) return;
+
+    const filas = document.querySelectorAll("#tablaProveedores tbody tr");
+
+    filas.forEach(tr => {
+        const nombre = tr.children[0]?.textContent?.trim();
+        if (nombre && tr.dataset.id == id) {
+            tr.classList.add("resaltado");
+            tr.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    });
+
+    history.replaceState({}, document.title, location.pathname);
+}
+
