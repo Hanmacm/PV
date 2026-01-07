@@ -6,123 +6,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="css/PVS.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
 </head>
+
 <body>
 
-<div class="layout">
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
 
-   
-   <aside class="sidebar-modern">
-
-         <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-<small id="brandUserRol"></small>
-
-                <small>Sistema Punto de Venta</small>
-                <small>La Carpita</small>
-            </div>
+    <div class="brand-box">
+        <div class="brand-avatar">PV</div>
+        <div class="brand-info">
+            <strong class="brand-user" id="brandUserName">Usuario</strong>
+            <small>Sistema Punto de Venta</small>
+            <small>La Carpita</small>
         </div>
+    </div>
 
-       <nav class="menu-modern">
-    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
-    <a id="menuCotizaciones" href="/cotizaciones" class="item  active"><i class="bi bi-file-text"></i> Cotizaciones</a>
-    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
-    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
-    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
-    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
-    
-</nav>
+    <nav class="menu-modern">
+        <a href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+        <a href="/ventas" class="item"><i class="bi bi-shop"></i><span>Ventas</span></a>
+        <a href="/cotizaciones" class="item active"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+        <a href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+        <a href="/compras" class="item"><i class="bi bi-cart"></i><span>Compras</span></a>
+        <a href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+        <a href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+        <a href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+        <a href="/usuarios" class="item"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+        <a href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+        <a href="/consultas" class="item"><i class="bi bi-search"></i><span>Consultas</span></a>
+        <a href="/reportes" class="item"><i class="bi bi-file-earmark"></i><span>Reportes</span></a>
+        <a href="/estadisticas" class="item"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+        <a href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+    </nav>
 
+    <div class="logout-box">
+        <a href="#" onclick="cerrarSesion()" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
+        </a>
+    </div>
 
-      <div class="logout-box">
-    <a href="#" onclick="cerrarSesion()" class="logout-btn">
-        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
-</div>
+</aside>
 
+<main class="content">
 
-    </aside>
+    <header class="topbar-app">
 
- 
-    <main class="content">
+        <button class="hamburger-btn" onclick="toggleSidebar()">
+            <i class="bi bi-list"></i>
+        </button>
 
-        <div class="content-header">
+        <div class="topbar-title">
             <h1>Cotizaciones</h1>
-            <small>Generar cotizaciones para clientes.</small>
+            <small>Generar cotizaciones para clientes</small>
         </div>
 
-        <div class="card">
-        
-<div class="action-bar">
+        <div class="topbar-actions">
+            <button class="btn btn-primary" onclick="nuevaCotizacion()">
+                <i class="bi bi-plus-circle"></i> Nueva cotización
+            </button>
 
-  <!-- IZQUIERDA -->
-  <div class="action-left">
-    <button class="btn btn-primary" onclick="nuevaCotizacion()">
-      <i class="bi bi-plus-circle"></i> Nueva cotización
-    </button>
+            <button class="btn btn-outline" onclick="abrirReporteCot()">
+                <i class="bi bi-bar-chart"></i> Reportes
+            </button>
 
-    <button class="btn btn-outline" onclick="abrirReporteCot()">
-      <i class="bi bi-bar-chart"></i> Reportes
-    </button>
-  </div>
+            <button class="btn btn-outline" onclick="abrirModal('modalBuscarCotizaciones')">
+    <i class="bi bi-search"></i> Buscar cotizaciones
+</button>
 
+        </div>
 
-<div class="buscador-card">
+    </header>
 
-  <div class="buscador-header">
-    <span class="buscador-title">Buscar por cotizacion</span>
+    <section class="card">
 
-    <button class="btn btn-light" onclick="cotizacionesHoy()">
-      <i class="bi bi-calendar-event"></i> Hoy
-    </button>
-  </div>
-
-  <input type="date" id="filtroFechaCot">
-
-  <div class="buscador-actions">
-    <button class="btn btn-primary" onclick="cotizacionesPorFecha()">
-      <i class="bi bi-search"></i> Buscar
-    </button>
-
-    <button class="btn btn-secondary" onclick="renderCotizaciones()">
-      <i class="bi bi-arrow-clockwise"></i> Todas
-    </button>
-  </div>
-
-</div>
+        <h3>Cotizaciones registradas</h3>
 
 
-</div>
-
-
-            <h3 class="mt-10">Cotizaciones registradas</h3>
-
-            <div class="row mt-10">
-                <div class="col-4">
-                    <label>Buscar cotizaciones por cliente</label>
-                    <input id="cotBuscarCliente" placeholder="Nombre del cliente...">
-                </div>
-
-                <div class="col-2" style="padding-top: 22px;">
-                    <button class="btn btn-secondary btn-sm" onclick="buscarCotizacionesCliente()">
-                        <i class="bi bi-search"></i> Buscar
-                    </button>
-                </div>
-            </div>
-
-            <table id="tablaCotizaciones" class="mt-10">
+        <div class="table-wrapper mt-10">
+            <table id="tablaCotizaciones">
                 <thead>
                     <tr>
                         <th>Folio</th>
@@ -138,73 +100,76 @@
                     <tr><td colspan="7">No hay cotizaciones aún.</td></tr>
                 </tbody>
             </table>
-
         </div>
 
-    </main>
-</div>
+    </section>
+
+</main>
 
 <div class="modal-overlay" id="modalCotizacion">
-    <div class="modal-box">
-        <div class="modal-header">
+    <div class="modal-box modal-venta">
+
+        <div class="modal-header modern">
             <h3 id="cotModalTitulo">Nueva Cotización</h3>
             <button class="modal-close" onclick="cerrarModal('modalCotizacion')">&times;</button>
         </div>
 
         <input type="hidden" id="cotIdEditar">
 
-        <div class="row">
-            <div class="col-6">
+        <div class="modal-body">
+
+            <section class="venta-col">
+
                 <label>Cliente</label>
                 <select id="cotCliente"></select>
-            </div>
 
-            <div class="col-3">
-                <label>Vigencia (días)</label>
+                <label class="mt-10">Vigencia (días)</label>
                 <input type="number" id="cotVigencia" value="7" min="1">
-            </div>
 
-            <div class="col-3">
-                <label>Total</label>
-                <div style="font-weight:bold;margin-top:8px;" id="cotTotal">$0.00</div>
-            </div>
-        </div>
+                <label class="mt-10">Notas</label>
+                <textarea id="cotNotas" placeholder="Notas de la cotización..."></textarea>
 
-        <label class="mt-10">Notas</label>
-        <textarea id="cotNotas" placeholder="Notas de la cotización..."></textarea>
+            </section>
 
-        <h3 class="mt-10">Agregar producto</h3>
+            <section class="venta-col">
 
-        <div class="row">
-            <div class="col-6">
+                <h4><i class="bi bi-cart-plus"></i> Agregar producto</h4>
+
                 <label>Producto</label>
                 <select id="cotProducto"></select>
-            </div>
 
-            <div class="col-3">
-                <label>Cant.</label>
+                <label class="mt-5">Cantidad</label>
                 <input type="number" id="cotCantidad" value="1" min="1">
-            </div>
 
-            <div class="col-3" style="padding-top: 20px;">
-                <button class="btn btn-primary btn-sm" onclick="agregarProductoCot()">
-                    <i class="bi bi-plus-circle"></i>
+                <button class="btn btn-primary mt-10" onclick="agregarProductoCot()">
+                    <i class="bi bi-plus-circle"></i> Agregar
                 </button>
-            </div>
-        </div>
 
-        <table class="mt-10" id="tablaCotCarrito">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cant.</th>
-                    <th>Precio</th>
-                    <th>Importe</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody><tr><td colspan="5">Sin productos.</td></tr></tbody>
-        </table>
+                <table class="mt-10" id="tablaCotCarrito">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>Importe</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5">Sin productos.</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="totales-box mt-10">
+                    <div class="total">
+                        <span>Total</span>
+                        <strong id="cotTotal">$0.00</strong>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
 
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="cerrarModal('modalCotizacion')">Cancelar</button>
@@ -215,75 +180,260 @@
 </div>
 
 <div class="modal-overlay" id="modalDetalleCot">
-    <div class="modal-box" style="max-width: 650px;">
-        
-        <div class="modal-header">
+    <div class="modal-box modal-detalle">
+
+        <div class="modal-header modern">
             <h3>Detalle de Cotización</h3>
             <button class="modal-close" onclick="cerrarModal('modalDetalleCot')">&times;</button>
         </div>
 
-        <div id="detalleCotInfo" style="margin-bottom:10px; font-size:14px; color:#555;"></div>
+        <div class="modal-body-detalle">
 
-        <table class="mt-10" style="width:100%;">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cant.</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody id="detalleCotTable">
-                <tr><td colspan="4">Cargando...</td></tr>
-            </tbody>
-        </table>
+            <div id="detalleCotInfo" class="detalle-info"></div>
+
+            <div class="detalle-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleCotTable">
+                        <tr><td colspan="4">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
 
         <div class="modal-footer">
-    <button class="btn btn-secondary" onclick="cerrarModal('modalDetalleCot')">Cerrar</button>
-    <button class="btn btn-primary" onclick="imprimirCotizacion()">
-        <i class="bi bi-printer"></i> Imprimir
-    </button>
-</div>
-
+            <button class="btn btn-secondary" onclick="cerrarModal('modalDetalleCot')">Cerrar</button>
+            <button class="btn btn-primary" onclick="imprimirCotizacion()">
+                <i class="bi bi-printer"></i> Imprimir
+            </button>
+        </div>
 
     </div>
 </div>
+
 <div class="modal-overlay" id="modalReporteCot">
-  <div class="modal-box" style="max-width:600px">
+    <div class="modal-box" style="max-width:600px">
 
-    <div class="modal-header">
-      <h3>Reporte de Cotizaciones</h3>
-      <button class="modal-close"
-        onclick="cerrarModal('modalReporteCot')">&times;</button>
+        <div class="modal-header">
+            <h3>Reporte de Cotizaciones</h3>
+            <button class="modal-close" onclick="cerrarModal('modalReporteCot')">&times;</button>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <label>Inicio</label>
+                <input type="date" id="repCotInicio">
+            </div>
+            <div class="col-6">
+                <label>Fin</label>
+                <input type="date" id="repCotFin">
+            </div>
+        </div>
+
+        <button class="btn btn-primary mt-10" onclick="cargarReporteCot()">
+            Generar
+        </button>
+
+        <div class="row mt-10">
+            <div class="card">Total cotizado: <b id="kpiTotal">$0</b></div>
+            <div class="card">Cotizaciones: <b id="kpiCantidad">0</b></div>
+            <div class="card">Convertidas: <b id="kpiConvertidas">0</b></div>
+            <div class="card">Canceladas: <b id="kpiCanceladas">0</b></div>
+            <div class="card">% Conversión: <b id="kpiConversion">0%</b></div>
+        </div>
+
     </div>
+</div>
 
-    <div class="row">
-      <div class="col-6">
-        <label>Inicio</label>
-        <input type="date" id="repCotInicio">
+<div class="modal-overlay" id="modalBuscarCotizaciones">
+    <div class="modal-box modal-busqueda">
+
+        <div class="modal-header modern">
+            <div>
+                <h3><i class="bi bi-search"></i> Buscar cotizaciones</h3>
+                <small>Filtra cotizaciones por fecha o período</small>
+            </div>
+            <button class="modal-close"
+                onclick="cerrarModal('modalBuscarCotizaciones')">&times;</button>
+        </div>
+
+        <div class="modal-body-busqueda">
+
+            <div class="busqueda-opciones">
+
+                <div class="busqueda-card">
+                    <h4><i class="bi bi-calendar-event"></i> Cotizaciones de hoy</h4>
+                    <button class="btn btn-primary"
+                        onclick="cotizacionesHoy(); cerrarModal('modalBuscarCotizaciones')">
+                        Ver hoy
+                    </button>
+                </div>
+
+                <div class="busqueda-card">
+                    <h4><i class="bi bi-calendar-range"></i> Por fecha</h4>
+
+                    <label>Fecha</label>
+                    <input type="date" id="filtroFechaCot">
+
+                    <button class="btn btn-primary mt-10"
+                        onclick="cotizacionesPorFecha(); cerrarModal('modalBuscarCotizaciones')">
+                        Buscar
+                    </button>
+                </div>
+
+                <div class="busqueda-card">
+                    <h4><i class="bi bi-list-ul"></i> Todas</h4>
+                    <button class="btn btn-secondary"
+                        onclick="renderCotizaciones(); cerrarModal('modalBuscarCotizaciones')">
+                        Ver todas
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalConvertirVenta">
+  <div class="modal-box modal-venta">
+
+    <div class="modal-header modern">
+      <div>
+        <h3>Convertir cotización a venta</h3>
+        <small id="cotVentaCliente"></small>
       </div>
-      <div class="col-6">
-        <label>Fin</label>
-        <input type="date" id="repCotFin">
-      </div>
+      <button class="modal-close" onclick="cerrarModal('modalConvertirVenta')">&times;</button>
     </div>
 
-    <button class="btn btn-primary mt-10"
-      onclick="cargarReporteCot()">
-      Generar
-    </button>
+    <div class="modal-body">
 
-    <div class="row mt-10">
-      <div class="card">Total cotizado: <b id="kpiTotal">$0</b></div>
-      <div class="card">Cotizaciones: <b id="kpiCantidad">0</b></div>
-      <div class="card">Convertidas: <b id="kpiConvertidas">0</b></div>
-      <div class="card">Canceladas: <b id="kpiCanceladas">0</b></div>
-      <div class="card">% Conversión: <b id="kpiConversion">0%</b></div>
+      <section class="venta-col">
+        <h4><i class="bi bi-cart"></i> Productos</h4>
+
+        <table id="tablaCotVentaCarrito">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant.</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4">Sin productos</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="venta-col">
+
+        <h4><i class="bi bi-credit-card"></i> Forma de pago</h4>
+
+        <div class="radio-group">
+          <label><input type="radio" name="cotMetodoPago" value="efectivo" checked> Efectivo</label>
+          <label><input type="radio" name="cotMetodoPago" value="tarjeta"> Tarjeta</label>
+          <label><input type="radio" name="cotMetodoPago" value="transferencia"> Transferencia</label>
+          <label><input type="radio" name="cotMetodoPago" value="mixto"> Mixto</label>
+        </div>
+
+        <div id="cotPagoEfectivo" class="mt-10">
+          <label>Paga con</label>
+          <input
+  type="number"
+  id="cotPagaCon"
+  min="0"
+  step="0.01"
+  oninput="calcCotVenta()"
+/>
+
+        </div>
+
+        <div id="cotPagoMixto" class="mt-10" style="display:none">
+          <label>Efectivo</label>
+<input type="number" id="cotMixtoEfectivo" step="0.01" oninput="calcCotVenta()">
+
+          <label class="mt-5">Tarjeta</label>
+<input type="number" id="cotMixtoTarjeta" step="0.01" oninput="calcCotVenta()">
+
+          <label class="mt-5">Transferencia</label>
+<input type="number" id="cotMixtoTransferencia" step="0.01" oninput="calcCotVenta()">
+        </div>
+
+        <div class="mt-10" id="cotBloqueComisionTarjeta" style="display:none">
+    <label>Comisión tarjeta (%)</label>
+    <input
+        type="number"
+        id="cotComisionTarjetaInput"
+        min="0"
+        step="0.1"
+        value="0"
+    >
+</div>
+<div class="mt-5" id="cotBloqueImpuesto">
+  <label>Impuesto (%)</label>
+  <input
+    type="number"
+    id="cotImpuestoInput"
+    min="0"
+    step="0.1"
+    value="16"
+  >
+</div>
+
+
+        <div class="totales-box mt-10">
+          <div><span>Subtotal</span><strong id="cotVentaSubtotal">$0.00</strong></div>
+          <div><span>IVA</span><strong id="cotVentaIVA">$0.00</strong></div>
+          <div class="total">
+            <span>Total</span>
+            <strong id="cotVentaTotal">$0.00</strong>
+          </div>
+        </div>
+<div class="mt-10" id="cotPagoInfo">
+  <div><span>Pagado</span> <strong id="cotPagado">$0.00</strong></div>
+  <div class="success"><span>Cambio</span> <strong id="cotCambio">$0.00</strong></div>
+  <div class="danger"><span>Falta</span> <strong id="cotFalta">$0.00</strong></div>
+</div>
+
+        <button class="btn btn-primary btn-cobrar mt-10"
+                onclick="confirmarConvertirVenta()">
+          <i class="bi bi-cash-stack"></i> Generar venta
+        </button>
+
+      </section>
+
     </div>
-
   </div>
 </div>
 
+<div class="modal-overlay" id="modalAlertModern">
+  <div class="alert-box" id="alertBox">
+
+    <div class="alert-icon" id="alertIcon">
+      <i class="bi bi-info-circle"></i>
+    </div>
+
+    <div class="alert-content">
+      <h3 id="alertTitle">Información</h3>
+      <p id="alertMessage">Mensaje</p>
+    </div>
+
+    <button class="alert-btn" onclick="cerrarModal('modalAlertModern')">
+      Aceptar
+    </button>
+
+  </div>
+</div>
 
 <script src="/js/core.js"></script>
 <script src="/js/cotizaciones.js"></script>
