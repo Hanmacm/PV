@@ -1,162 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Usuarios - Punto de Venta</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Usuarios - Punto de Venta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/css/PV.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/PV.css">
+  <link rel="stylesheet" href="/css/PVS.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
-<div class="layout">
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
 
-  <aside class="sidebar-modern">
+  <div class="brand-box">
+    <div class="brand-avatar">PV</div>
+    <div class="brand-info">
+      <strong class="brand-user" id="brandUserName">Usuario</strong>
+      <small id="brandUserRol"></small>
+      <small>Sistema Punto de Venta</small>
+      <small>La Carpita</small>
+    </div>
+  </div>
 
-        <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-<small id="brandUserRol"></small>
+  <nav class="menu-modern">
+    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i><span>Ventas</span></a>
+    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i><span>Compras</span></a>
+    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+    <a id="menuUsuarios" href="/usuarios" class="item active"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i><span>Consultas</span></a>
+    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i><span>Reportes</span></a>
+    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+  </nav>
 
-                <small>Sistema Punto de Venta</small>
-                <small>La Carpita</small>
-            </div>
+  <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+      <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
+    </a>
+  </div>
+
+</aside>
+
+
+<main class="content">
+
+  <header class="topbar-app">
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div class="topbar-title">
+      <h1>Usuarios</h1>
+      <small>Gestión de usuarios del sistema</small>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn btn-primary" onclick="abrirModalUsuario()">
+        <i class="bi bi-plus-circle"></i> Nuevo usuario
+      </button>
+
+      <button class="btn btn-outline" onclick="abrirModal('modalBuscarUsuarios')">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card-head">
+      <h3>Listado de usuarios</h3>
+
+    
+
+    <div class="table-wrapper">
+      <table id="tablaUsuarios">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-overlay" id="modalUsuario">
+  <div class="modal-box modal-usuario">
+
+    <div class="modal-header modern">
+      <div>
+        <h3 id="usuTitulo">Nuevo Usuario</h3>
+        <small>Alta y edición de usuarios</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalUsuario')">&times;</button>
+    </div>
+
+    <div class="modal-body modal-body-usuario">
+
+      <input type="hidden" id="usuId">
+
+      <div class="form-grid">
+        <div class="form-item">
+          <label>Usuario</label>
+          <input id="userUsuario" autocomplete="off">
         </div>
 
-        <nav class="menu-modern">
-    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
-    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
-    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
-    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-    <a id="menuUsuarios" href="/usuarios" class="item active"><i class="bi bi-person-badge"></i> Usuarios</a>
-    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-    <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
-    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
-   
-</nav>
+        <div class="form-item">
+          <label>Contraseña</label>
+          <input type="password" id="passUsuario" autocomplete="new-password">
+        </div>
 
+        <div class="form-item">
+          <label>Nombre</label>
+          <input id="nombreUsuario" autocomplete="off">
+        </div>
 
-       <div class="logout-box">
-    <a href="#" onclick="cerrarSesion()" class="logout-btn">
-        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-    </a>
+        <div class="form-item">
+          <label>Rol</label>
+          <select id="rolUsuario">
+            <option value="admin">Admin</option>
+            <option value="cajero">Cajero</option>
+            <option value="usuario">Usuario</option>
+            <option value="cliente">Cliente</option>
+          </select>
+        </div>
+
+        <div class="form-item">
+          <label>Teléfono</label>
+          <input id="telefonoUsuario" autocomplete="off">
+        </div>
+
+        <div class="form-item">
+          <label>Correo</label>
+          <input id="correoUsuario" autocomplete="off">
+        </div>
+      </div>
+
+   <div class="modal-footer">
+  <button class="btn btn-secondary btn-sm" onclick="cerrarModal('modalUsuario')">
+    Cancelar
+  </button>
+  <button class="btn btn-primary btn-sm" onclick="guardarUsuario()">
+    Guardar
+  </button>
 </div>
 
 
-    </aside>
-    <main class="content">
-        <div class="content-header">
-            <h1>Usuarios</h1>
-            <small>Gestión de usuarios del sistema.</small>
-        </div>
+    </div>
 
-        <div class="card">
+  </div>
+</div>
 
-            <button class="btn btn-primary" onclick="abrirModalUsuario()">
-                <i class="bi bi-plus-circle"></i> Nuevo usuario
-            </button>
+<div class="modal-overlay" id="modalBuscarUsuarios">
+  <div class="modal-box modal-busqueda-simple">
 
-<div class="filtros-barra">
+    <div class="modal-header modern">
+      <div>
+        <h3><i class="bi bi-search"></i> Buscar usuarios</h3>
+        <small>Filtrar usuarios del sistema</small>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modalBuscarUsuarios')">&times;</button>
+    </div>
 
-    <input 
+    <div class="modal-body-busqueda-simple">
+
+      <label>Buscar por texto</label>
+      <input
         type="text"
-        id="filtroTexto"
-        placeholder="Buscar usuario, nombre o correo..."
-        class="input-buscar"
-    >
+        id="busUsuTexto"
+        placeholder="Usuario, nombre o correo"
+      >
 
-    <select id="filtroRol" class="input-select">
+      <label class="mt-10">Rol</label>
+      <select id="busUsuRol">
         <option value="">Todos</option>
         <option value="admin">Admin</option>
         <option value="cajero">Cajero</option>
         <option value="usuario">Usuario</option>
         <option value="cliente">Cliente</option>
-    </select>
+      </select>
 
-    <button class="btn btn-primary" onclick="buscarUsuarios()">
-        <i class="bi bi-search"></i> Buscar
-    </button>
+      <div class="modal-footer mt-15">
+      
 
-    <button class="btn btn-secondary" onclick="limpiarBusqueda()">
-        <i class="bi bi-x-circle"></i> Limpiar
-    </button>
+        <button class="btn btn-primary" onclick="buscarUsuariosDesdeModal(); cerrarModal('modalBuscarUsuarios')">
+          Buscar
+        </button>
+      </div>
 
-</div>
-
-            <h3 class="mt-10">Listado de usuarios</h3>
-
-            <table id="tablaUsuarios">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Nombre</th>
-                        <th>Rol</th>
-                        <th>Teléfono</th>
-                        <th>Correo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="6">Cargando...</td></tr>
-                </tbody>
-            </table>
-
-        </div>
-    </main>
-
-</div>
-
-
-<div class="modal-overlay" id="modalUsuario">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 id="usuTitulo">Nuevo Usuario</h3>
-            <button class="modal-close" onclick="cerrarModal('modalUsuario')">&times;</button>
-        </div>
-
-        <input type="hidden" id="usuId">
-
-        <label>Usuario</label>
-        <input id="userUsuario">
-
-        <label class="mt-10">Contraseña</label>
-        <input type="password" id="passUsuario">
-
-        <label class="mt-10">Nombre</label>
-        <input id="nombreUsuario">
-
-        <label class="mt-10">Rol</label>
-        <select id="rolUsuario">
-            <option value="admin">Admin</option>
-            <option value="cajero">Cajero</option>
-            <option value="usuario">Usuario</option>
-            <option value="cliente">Cliente</option>
-        </select>
-
-        <label class="mt-10">Teléfono</label>
-        <input id="telefonoUsuario">
-
-        <label class="mt-10">Correo</label>
-        <input id="correoUsuario">
-
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="cerrarModal('modalUsuario')">Cancelar</button>
-            <button class="btn btn-primary" onclick="guardarUsuario()">Guardar</button>
-        </div>
     </div>
+
+  </div>
 </div>
+
 
 
 <script src="/js/core.js"></script>
 <script src="/js/usuarios.js"></script>
-
 </body>
 </html>
