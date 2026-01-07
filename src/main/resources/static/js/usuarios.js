@@ -143,3 +143,32 @@ function abrirModalUsuario() {
 function guardarUsuario() {
     saveUsr();
 }
+
+function buscarUsuariosDesdeModal() {
+    const t = document.getElementById("busUsuTexto").value;
+    const r = document.getElementById("busUsuRol").value;
+
+    fetch(`/usuarios/buscar?texto=${encodeURIComponent(t)}&rol=${r}`)
+        .then(res => res.json())
+        .then(d => drawUsrs(d))
+        .catch(() => alert("Error en la búsqueda"));
+}
+
+
+function buscarUsuariosRolSolo() {
+  const r = document.getElementById("busUsuRolSolo")?.value ?? "";
+  document.getElementById("filtroTexto").value = "";
+  document.getElementById("filtroRol").value = r;
+
+  buscarUsuarios();
+}
+
+function verTodosUsuarios() {
+
+  document.getElementById("filtroTexto").value = "";
+  document.getElementById("filtroRol").value = "";
+
+  if (typeof cargarUsuarios === "function") cargarUsuarios();
+  else if (typeof buscarUsuarios === "function") buscarUsuarios();
+}
+
