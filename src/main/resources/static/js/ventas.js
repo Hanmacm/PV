@@ -1,6 +1,13 @@
 let crt = [];
 let prd = [];
 let cli = [];
+let comisionTarjetaPct = 3;
+let impuestoPct = 16;
+document.getElementById("impuestoInput")
+  ?.addEventListener("input", e => {
+      impuestoPct = Number(e.target.value || 0);
+      calc();
+  });
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -19,6 +26,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         .forEach(r => r.addEventListener("change", calc));
 
     ventaPagaConModal.addEventListener("input", calc);
+["mixtoEfectivo","mixtoTarjeta","mixtoTransferencia"]
+  .forEach(id => document.getElementById(id)?.addEventListener("input", calc));
+document.getElementById("comisionTarjetaInput")
+  ?.addEventListener("input", e => {
+      comisionTarjetaPct = Number(e.target.value || 0);
+      calc();
+  });
 
     loadVtas();
 });
@@ -96,67 +110,128 @@ function drawCrt() {
 
     calc();
 }
-
 function calc() {
 
     const sub = crt.reduce((s, x) => s + x.subtotal, 0);
-    const iva = sub * 0.16;
+    const iva = sub * (impuestoPct / 100);
+
 
     let com = 0;
-    const mt = document.querySelector("input[name='ventaMetodoModal']:checked")?.value || "efectivo";
+    let paga = 0;
+    let cmb  = 0;
+
+    const mt = document.querySelector("input[name='ventaMetodoModal']:checked")?.value;
 
     ocultar("infoTarjetaModal");
     ocultar("infoTransferenciaModal");
     ocultar("bloqueEfectivoModal");
+    ocultar("bloqueMixtoModal");
+    ocultar("bloqueComisionTarjeta");
+
+    const pct = comisionTarjetaPct / 100;
+
+    if (mt === "efectivo") {
+        mostrar("bloqueEfectivoModal");
+        paga = Number(ventaPagaConModal.value || 0);
+    }
 
     if (mt === "tarjeta") {
-        com = sub * 0.03;
         mostrar("infoTarjetaModal");
+        mostrar("bloqueComisionTarjeta");
+
+        com = sub * pct;
+        paga = sub + iva + com;
     }
 
     if (mt === "transferencia") {
         mostrar("infoTransferenciaModal");
+        paga = sub + iva;
     }
 
-    if (mt === "efectivo") {
-        mostrar("bloqueEfectivoModal");
+    if (mt === "mixto") {
+        mostrar("bloqueMixtoModal");
+        mostrar("bloqueComisionTarjeta");
+
+        const ef = Number(mixtoEfectivo.value || 0);
+        const tj = Number(mixtoTarjeta.value || 0);
+        const tr = Number(mixtoTransferencia.value || 0);
+
+        paga = ef + tj + tr;
+        com  = tj * pct;
     }
 
     const ttl = sub + iva + com;
-    const paga = Number(ventaPagaConModal.value || 0);
-    const cmb  = mt === "efectivo" ? Math.max(paga - ttl, 0) : 0;
+
+    if (mt === "efectivo" || mt === "mixto") {
+        cmb = Math.max(paga - ttl, 0);
+    }
 
     ventaSubtotalModal.textContent = formatoMoneda(sub);
     ventaImpuestoModal.textContent = formatoMoneda(iva);
     ventaComisionModal.textContent = formatoMoneda(com);
     ventaTotalModal.textContent    = formatoMoneda(ttl);
     ventaCambioModal.textContent   = formatoMoneda(cmb);
+    const btn = document.getElementById("btnVentaCobrarModal");
+if (btn) {
+    btn.disabled = (function () {
+        const total = Number(ventaTotalModal.textContent.replace(/[$,]/g, ""));
+        let pagado = 0;
+
+        if (mt === "efectivo") pagado = Number(ventaPagaConModal.value || 0);
+        if (mt === "tarjeta" || mt === "transferencia") pagado = total;
+        if (mt === "mixto") {
+            pagado =
+                Number(mixtoEfectivo.value || 0) +
+                Number(mixtoTarjeta.value || 0) +
+                Number(mixtoTransferencia.value || 0);
+        }
+
+        return pagado < total;
+    })();
 }
+
+}
+
+
 
 async function saveVta() {
 
-    if (!crt.length) return msg("Carrito vacío");
+    if (!crt.length) return
+        alertaWarning("Carrito vacío");
+
+    if (!validarPago()) return;
 
     const c = await ajaxGET("/api/cajas/actual");
-    if (!c || c.estado !== "Abierta") return msg("No hay caja abierta");
+    if (!c || c.estado !== "Abierta") return alertaError("No hay una caja abierta para registrar la venta");
+
+
+    const mt = document.querySelector("input[name='ventaMetodoModal']:checked").value;
 
     const req = {
         clienteId: Number(ventaClienteModal.value || 0),
         usuarioId: 1,
-        metodoPago: document.querySelector("input[name='ventaMetodoModal']:checked").value,
-        total: Number(ventaTotalModal.textContent.replace("$","")),
+        metodoPago: mt,
+        total: Number(ventaTotalModal.textContent.replace(/[$,]/g, "")),
+        comisionTarjetaPct: comisionTarjetaPct,
+        pagos: mt === "mixto" ? {
+            efectivo: Number(mixtoEfectivo.value || 0),
+            tarjeta: Number(mixtoTarjeta.value || 0),
+            transferencia: Number(mixtoTransferencia.value || 0)
+        } : null,
         detalles: crt
     };
 
     const r = await ajaxPOST("/api/ventas/guardar", req);
 
-    msg("Venta guardada #" + r.id);
+    alertaExito("Venta guardada correctamente. Folio #" + r.id);
+
 
     crt = [];
     drawCrt();
     cerrarModal("modalVentas");
     loadVtas();
 }
+
 
 async function loadVtas() {
     renderVtas(await ajaxGET("/api/ventas/listar"));
@@ -178,7 +253,7 @@ function renderVtas(ls) {
         const nom = c ? c.nombre : "N/A";
 
         tb.innerHTML += `
-            <tr>
+            <tr data-id="${v.id}">
                 <td>${v.id}</td>
                 <td>${v.fecha ?? ""}</td>
                 <td>${nom}</td>
@@ -196,7 +271,7 @@ function renderVtas(ls) {
                         <i class="bi bi-eye"></i>
                     </button>
                     <button class="btn btn-danger btn-sm"
-                        onclick="canVta(${v.id})"
+                        onclick="confirmarCancelarVenta(${v.id})"
                         ${v.estado === "CANCELADA" ? "disabled" : ""}>
                         <i class="bi bi-x-circle"></i>
                     </button>
@@ -208,6 +283,7 @@ function renderVtas(ls) {
             </tr>
         `;
     });
+    resaltarDesdeConsulta();
 }
 
 async function ventasHoy() {
@@ -256,20 +332,36 @@ async function verDet(id) {
         abrirModal("modalDetalleVenta");
 
     } catch {
-        msg("Error cargando detalle");
-    }
+    alertaError("No se pudo cargar el detalle de la venta");
 }
 
-async function canVta(id) {
+}
 
-    if (!confirm("¿Cancelar venta?")) return;
+function alertaConfirmacion(titulo, mensaje, onAceptar) {
+    alerta("warning", titulo, mensaje);
 
+    const btn = document.querySelector("#modalAlertModern .btn-primary");
+
+    btn.onclick = null;
+
+    btn.onclick = () => {
+        cerrarModal("modalAlertModern");
+        if (typeof onAceptar === "function") onAceptar();
+    };
+}
+
+
+
+async function ejecutarCancelacionVenta(id) {
     const r = await fetch(`/api/ventas/cancelar/${id}`, { method: "PUT" });
-    if (!r.ok) return msg("No se pudo cancelar");
-
-    msg("Venta cancelada");
+    if (!r.ok) {
+        alertaError("No se pudo cancelar la venta");
+        return;
+    }
+    alertaExito("Venta cancelada correctamente");
     loadVtas();
 }
+
 
 async function cargarReportePeriodo() {
 
@@ -295,3 +387,112 @@ function abrirModalReportes() {
 function mostrar(id){ const e=document.getElementById(id); if(e)e.style.display="block"; }
 function ocultar(id){ const e=document.getElementById(id); if(e)e.style.display="none"; }
 function ticketPDF(id){ window.open(`/api/ventas/ticket/${id}`,"_blank"); }
+function cargarVentas() {
+    loadVtas();
+}
+function validarPago() {
+
+    const total = Number(
+        ventaTotalModal.textContent.replace(/[$,]/g, "")
+    );
+
+    const mt = document.querySelector("input[name='ventaMetodoModal']:checked")?.value;
+
+    let pagado = 0;
+
+    if (mt === "efectivo") {
+        pagado = Number(ventaPagaConModal.value || 0);
+    }
+
+    if (mt === "tarjeta") {
+        pagado = total;
+    }
+
+    if (mt === "transferencia") {
+        pagado = total;
+    }
+
+    if (mt === "mixto") {
+        const ef = Number(mixtoEfectivo.value || 0);
+        const tj = Number(mixtoTarjeta.value || 0);
+        const tr = Number(mixtoTransferencia.value || 0);
+        pagado = ef + tj + tr;
+    }
+
+    if (pagado < total) {
+        alertaWarning(`Pago incompleto. Faltan ${formatoMoneda(total - pagado)}`);
+
+        return false;
+    }
+
+    return true;
+}
+
+function alerta(tipo, titulo, mensaje) {
+    const box   = document.getElementById("alertBox");
+    const icon  = document.getElementById("alertIcon");
+    const title = document.getElementById("alertTitle");
+    const msg   = document.getElementById("alertMessage");
+    const btn   = document.getElementById("alertBtn");
+
+    const icons = {
+        info: "bi-info-circle",
+        success: "bi-check-circle",
+        error: "bi-x-circle",
+        warning: "bi-exclamation-triangle"
+    };
+
+    box.className = `alert-box alert-${tipo}`;
+    icon.innerHTML = `<i class="bi ${icons[tipo]}"></i>`;
+    title.textContent = titulo;
+    msg.textContent = mensaje;
+
+    btn.onclick = () => cerrarModal("modalAlertModern");
+
+    abrirModal("modalAlertModern");
+}
+
+const alertaInfo    = m => alerta("info",    "Información", m);
+const alertaExito   = m => alerta("success", "Éxito", m);
+const alertaError   = m => alerta("error",   "Error", m);
+const alertaWarning = m => alerta("warning", "Atención", m);
+function confirmarCancelarVenta(id) {
+    alertaConfirmacion(
+        "Cancelar venta",
+        "¿Estás seguro de cancelar esta venta?",
+        async () => {
+            await ejecutarCancelacionVenta(id);
+        }
+    );
+}
+function alertaConfirmacion(titulo, mensaje, onAceptar) {
+    alerta("warning", titulo, mensaje);
+
+    const btn = document.getElementById("alertBtn");
+
+    btn.onclick = () => {
+        cerrarModal("modalAlertModern");
+        if (typeof onAceptar === "function") onAceptar();
+    };
+}
+function resaltarDesdeConsulta() {
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("resaltar");
+
+    if (!id) return;
+
+    const filas = document.querySelectorAll("#tablaVentas tbody tr");
+
+    filas.forEach(tr => {
+        if (tr.dataset.id == id) {
+            tr.classList.add("resaltado");
+            tr.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+    });
+
+    history.replaceState({}, document.title, location.pathname);
+}
