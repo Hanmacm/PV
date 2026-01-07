@@ -1,30 +1,25 @@
+
 let facturasCache = [];
 let ventasCache = [];
 let clientesCache = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    try {
-        cargarVentas();
-        cargarClientes();
-        cargarFacturas();
-    } catch (e) {
-        console.error("Init facturación:", e);
-    }
+    cargarVentas();
+    cargarClientes();
+    cargarFacturas();
 });
 
 async function cargarVentas() {
-    let select = document.getElementById("factVenta");
+    const select = document.getElementById("factVenta");
     if (!select) return;
 
     select.innerHTML = `<option value="">Cargando ventas...</option>`;
 
     try {
         const res = await fetch("/api/ventas/facturables");
-        if (!res.ok) throw new Error("No se pudo cargar ventas facturables");
+        if (!res.ok) throw new Error();
 
-        const ventas = await res.json();
-        ventasCache = Array.isArray(ventas) ? ventas : [];
-
+        ventasCache = await res.json() || [];
         select.innerHTML = `<option value="">Seleccione...</option>`;
 
         ventasCache
@@ -32,328 +27,325 @@ async function cargarVentas() {
             .forEach(v => {
                 select.innerHTML += `
                     <option value="${v.id}">
-                        Venta #${v.id} - Total: $${Number(v.total || 0).toFixed(2)}
-                    </option>
-                `;
+                        Venta #${v.id} - $${Number(v.total || 0).toFixed(2)}
+                    </option>`;
             });
 
         if (select.options.length === 1) {
-            select.innerHTML = `<option value="">No hay ventas pagadas para facturar</option>`;
+            select.innerHTML = `<option value="">No hay ventas pagadas</option>`;
         }
 
-    } catch (err) {
-        console.error("cargarVentas:", err);
+    } catch {
         select.innerHTML = `<option value="">Error al cargar ventas</option>`;
-        alert("No pude cargar las ventas para facturar. Revisa tu servidor.");
+        alertaError("No se pudieron cargar las ventas facturables");
     }
 }
 
 async function cargarClientes() {
-    let select = document.getElementById("factCliente");
+    const select = document.getElementById("factCliente");
     if (!select) return;
 
-    select.innerHTML = `<option value="">Cargando clientes...</option>`;
-
     try {
-        const res = await fetch("/api/clientes");
-        if (!res.ok) throw new Error("No se pudo cargar clientes");
+        const res = await fetch("/api/clientes/activos");
+        if (!res.ok) throw new Error();
 
-        const data = await res.json();
-        clientesCache = Array.isArray(data) ? data : [];
+        clientesCache = await res.json() || [];
 
-        select.innerHTML = `<option value="">Seleccione un cliente...</option>`;
+        select.innerHTML = `<option value="">Seleccione...</option>`;
 
         clientesCache.forEach(c => {
             select.innerHTML += `
-                <option value="${c.nombre}">
-                    ${c.nombre} ${c.telefono ? "(" + c.telefono + ")" : ""}
+                <option value="${c.id}">
+                    ${c.nombre}
                 </option>
             `;
         });
 
-        if (select.options.length === 1) {
-            select.innerHTML = `<option value="">No hay clientes disponibles</option>`;
-        }
-
-    } catch (err) {
-        console.error("cargarClientes:", err);
+    } catch (e) {
+        console.error(e);
         select.innerHTML = `<option value="">Error al cargar clientes</option>`;
-        alert("No pude cargar clientes. Revisa el backend.");
+        alertaError("No se pudieron cargar los clientes");
     }
 }
+document.addEventListener("change", (e) => {
+    if (e.target.id !== "factCliente") return;
+
+    const id = e.target.value;
+    const cli = clientesCache.find(c => c.id == id);
+    if (!cli) return;
+
+    factRFC.value   = cli.rfc || "";
+    factRazon.value = cli.razonSocial || "";
+    factUso.value   = cli.usoCfdi || "P01";
+});
 
 async function cargarFacturas() {
-    let tbody = document.querySelector("#tablaFacturas tbody");
+    const tbody = document.querySelector("#tablaFacturas tbody");
     if (!tbody) return;
 
-    tbody.innerHTML = `<tr><td colspan="11">Cargando facturas...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11">Cargando...</td></tr>`;
 
     try {
         const res = await fetch("/facturas/listar");
-        if (!res.ok) throw new Error("No se pudo listar facturas");
+        if (!res.ok) throw new Error();
 
-        const data = await res.json();
-        facturasCache = Array.isArray(data) ? data : [];
-
+        facturasCache = await res.json() || [];
         renderFacturas(facturasCache);
 
-    } catch (err) {
-        console.error("cargarFacturas:", err);
-        tbody.innerHTML = `<tr><td colspan="11">No se pudieron cargar las facturas.</td></tr>`;
-        alert("Algo falló al cargar facturas. Intenta recargar la página.");
+    } catch {
+        tbody.innerHTML = `<tr><td colspan="11">Error al cargar facturas</td></tr>`;
+        alertaError("No se pudieron cargar las facturas");
     }
 }
 
 function renderFacturas(lista) {
-    let tbody = document.querySelector("#tablaFacturas tbody");
+    const tbody = document.querySelector("#tablaFacturas tbody");
     if (!tbody) return;
 
     tbody.innerHTML = "";
 
-    if (!lista || lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11">Sin facturas todavía.</td></tr>`;
+    if (!lista.length) {
+        tbody.innerHTML = `<tr><td colspan="11">Sin facturas</td></tr>`;
         return;
     }
 
     lista.forEach(f => {
         const estado = (f.estado || "").toUpperCase();
-
-        const badgeEstado = estado === "ACTIVA"
+        const badge = estado === "ACTIVA"
             ? `<span class="badge badge-success">ACTIVA</span>`
             : `<span class="badge badge-danger">CANCELADA</span>`;
 
-        const botones = estado === "ACTIVA"
-            ? `
-                <button class="btn btn-danger btn-small" onclick="cancelarFactura(${f.id})" title="Cancelar">
-                    <i class="bi bi-x-circle"></i>
-                </button>
-                <button class="btn btn-small" onclick="verPDF(${f.id})" title="Ver PDF">
-                    <i class="bi bi-printer"></i>
-                </button>
-              `
-            : `
-                <button class="btn btn-small" onclick="verPDF(${f.id})" title="Ver PDF">
-                    <i class="bi bi-printer"></i>
-                </button>
-              `;
-
-        const fecha = f.fecha ? String(f.fecha).replace("T", " ").substring(0, 16) : "-";
-        const total = Number(f.total || 0).toFixed(2);
-
         tbody.innerHTML += `
             <tr>
-                <td>${f.id ?? ""}</td>
-                <td>${f.ventaId ?? ""}</td>
-                <td>${f.cliente ?? ""}</td>
-                <td>${f.razonSocial ?? ""}</td>
-                <td>${f.rfc ?? ""}</td>
-                <td>${f.usoCfdi ?? ""}</td>
-                <td>$${total}</td>
-                <td>${Number(f.timbrado || 0) === 1 ? "✔" : "✘"}</td>
-                <td>${fecha}</td>
-                <td>${badgeEstado}</td>
-                <td>${botones}</td>
-            </tr>
-        `;
+                <td>${f.id}</td>
+                <td>${f.ventaId}</td>
+                <td>${f.cliente}</td>
+                <td>${f.razonSocial}</td>
+                <td>${f.rfc}</td>
+                <td>${f.usoCfdi}</td>
+                <td>$${Number(f.total).toFixed(2)}</td>
+                <td>${f.timbrado ? "✔" : "✘"}</td>
+                <td>${f.fecha?.replace("T"," ").substring(0,16) || "-"}</td>
+                <td>${badge}</td>
+                <td>
+                    ${estado === "ACTIVA"
+                        ? `<button class="btn btn-danger btn-sm" onclick="cancelarFactura(${f.id})">
+                               <i class="bi bi-x-circle"></i>
+                           </button>`
+                        : ""}
+                    <button class="btn btn-info btn-sm" onclick="verPDF(${f.id})">
+                        <i class="bi bi-printer"></i>
+                    </button>
+                </td>
+            </tr>`;
     });
 }
 
 async function generarFactura() {
-    const ventaId = document.getElementById("factVenta")?.value;
-    const cliente = document.getElementById("factCliente")?.value;
-    const rfc = (document.getElementById("factRFC")?.value || "").trim();
-    const razon = (document.getElementById("factRazon")?.value || "").trim();
-    const uso = document.getElementById("factUso")?.value || "P01";
-    const timbrado = document.getElementById("factTimbrado")?.checked ? 1 : 0;
 
-    if (!ventaId) return alert("Te faltó seleccionar la venta.");
-    if (!cliente) return alert("Selecciona el cliente.");
-    if (!rfc) return alert("Pon el RFC (aunque sea genérico).");
-    if (!razon) return alert("Falta la razón social.");
+    const ventaId = factVenta.value;
+    const clienteId = factCliente.value;
+const cli = clientesCache.find(c => c.id == clienteId);
 
-    let ventaSel = ventasCache.find(v => String(v.id) === String(ventaId));
+if (!cli) return alertaError("Cliente no encontrado");
 
-    if (!ventaSel) {
-        try {
-            const resVenta = await fetch("/api/ventas/listar");
-            const ventas = await resVenta.json();
-            ventasCache = Array.isArray(ventas) ? ventas : [];
-            ventaSel = ventasCache.find(v => String(v.id) === String(ventaId));
-        } catch (e) {
-            console.error("Ventas fallback:", e);
-        }
-    }
+const clienteNombre = cli.nombre;
 
-    if (!ventaSel) return alert("No encontré esa venta. Revisa que exista.");
+    const rfc = factRFC.value.trim();
+    const razon = factRazon.value.trim();
+    const uso = factUso.value;
+    const timbrado = factTimbrado.checked ? 1 : 0;
 
-    const factura = {
-        ventaId: parseInt(ventaId),
-        cliente: cliente,
-        rfc: rfc,
-        razonSocial: razon,
-        usoCfdi: uso,
-        total: Number(ventaSel.total || 0),
-        timbrado: timbrado
-    };
+    if (!ventaId) return alertaWarning("Selecciona una venta");
+    if (!clienteId) return alertaWarning("Selecciona un cliente");
+    if (!rfc) return alertaWarning("Ingresa el RFC");
+    if (!razon) return alertaWarning("Ingresa la razón social");
+const yaFacturada = facturasCache.some(f => 
+    String(f.ventaId) === String(ventaId) && f.estado === "ACTIVA"
+);
+
+if (yaFacturada) {
+    return alertaWarning("Esta venta ya fue facturada");
+}
+
+    const venta = ventasCache.find(v => String(v.id) === String(ventaId));
+    if (!venta) return alertaError("Venta no encontrada");
+
+    const body = {
+    ventaId: Number(ventaId),
+    cliente: clienteNombre,
+    rfc,
+    razonSocial: razon,
+    usoCfdi: uso,
+    total: Number(venta.total),
+    timbrado
+};
+
 
     try {
         const res = await fetch("/facturas/guardar", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(factura)
+            body: JSON.stringify(body)
         });
 
         if (!res.ok) {
-            const txt = await res.text();
-            alert(txt || "No se pudo generar la factura.");
-            return;
+            const t = await res.text();
+            return alertaError(t || "No se pudo generar la factura");
         }
 
         cerrarModal("modalFactura");
-        alert("Listo ✅ Factura generada.");
-        await cargarFacturas();
-        await cargarVentas();
-
+        alertaExito("Factura generada correctamente");
+        cargarFacturas();
+        cargarVentas();
         limpiarFormFactura();
 
-    } catch (err) {
-        console.error("generarFactura:", err);
-        alert("Se cayó la conexión al generar la factura.");
+    } catch {
+        alertaError("Error al generar la factura");
     }
 }
 
-function limpiarFormFactura() {
-    const ids = ["factVenta", "factCliente", "factRFC", "factRazon"];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-    });
+function cancelarFactura(id) {
+    alertaConfirmacion(
+        "Cancelar factura",
+        "¿Deseas cancelar esta factura?",
+        async () => {
+            try {
+                const r = await fetch(`/facturas/cancelar/${id}`, { method: "PUT" });
+                if (!r.ok) throw new Error();
 
-    const chk = document.getElementById("factTimbrado");
-    if (chk) chk.checked = false;
+                alertaWarning("Factura cancelada");
+                cargarFacturas();
 
-    const uso = document.getElementById("factUso");
-    if (uso) uso.value = "P01";
-}
-
-function verPDF(id) {
-    if (!id) return;
-    window.open(`/facturas/pdf/${id}`, "_blank");
-}
-
-async function cancelarFactura(id) {
-    if (!id) return;
-
-    const ok = confirm("¿Seguro que quieres cancelar esta factura?");
-    if (!ok) return;
-
-    try {
-        const res = await fetch(`/facturas/cancelar/${id}`, { method: "PUT" });
-
-        if (!res.ok) {
-            const txt = await res.text();
-            alert(txt || "No se pudo cancelar.");
-            return;
+            } catch {
+                alertaError("No se pudo cancelar la factura");
+            }
         }
-
-        alert("Factura cancelada ✅");
-        cargarFacturas();
-
-    } catch (e) {
-        console.error("cancelarFactura:", e);
-        alert("No pude cancelar. Revisa tu servidor.");
-    }
+    );
 }
 
 async function abrirReporteFacturas() {
     abrirModal("modalReporteFacturas");
 
-    document.getElementById("kpiTotalFacturado").textContent = "$0";
-    document.getElementById("kpiFacturasActivas").textContent = "0";
-    document.getElementById("kpiFacturasCanceladas").textContent = "0";
-    document.getElementById("kpiTotalCancelado").textContent = "$0";
-
     try {
         const r = await fetch("/facturas/reportes/kpis");
-        if (!r.ok) throw new Error("KPIs no disponibles");
-        const data = await r.json();
+        const d = await r.json();
 
-        document.getElementById("kpiTotalFacturado").textContent =
-            "$" + Number(data.totalFacturado || 0).toFixed(2);
+        kpiTotalFacturado.textContent = "$" + Number(d.totalFacturado).toFixed(2);
+        kpiFacturasActivas.textContent = d.facturasActivas;
+        kpiFacturasCanceladas.textContent = d.facturasCanceladas;
+        kpiTotalCancelado.textContent = "$" + Number(d.totalCancelado).toFixed(2);
 
-        document.getElementById("kpiFacturasActivas").textContent =
-            Number(data.facturasActivas || 0);
-
-        document.getElementById("kpiFacturasCanceladas").textContent =
-            Number(data.facturasCanceladas || 0);
-
-        document.getElementById("kpiTotalCancelado").textContent =
-            "$" + Number(data.totalCancelado || 0).toFixed(2);
-
-    } catch (e) {
-        console.error("abrirReporteFacturas:", e);
-        alert("No pude cargar los KPIs del reporte.");
+    } catch {
+        alertaError("No se pudo cargar el reporte");
     }
 }
 
+function verPDF(id) {
+    window.open(`/facturas/pdf/${id}`, "_blank");
+}
+
+function limpiarFormFactura() {
+    factVenta.value = "";
+    factCliente.value = "";
+    factRFC.value = "";
+    factRazon.value = "";
+    factUso.value = "P01";
+    factTimbrado.checked = false;
+}
+
+function alerta(tipo, titulo, mensaje) {
+    alertBox.className = `alert-box alert-${tipo}`;
+    alertIcon.innerHTML = `<i class="bi bi-${{
+        info:"info-circle",
+        success:"check-circle",
+        warning:"exclamation-triangle",
+        error:"x-circle"
+    }[tipo]}"></i>`;
+    alertTitle.textContent = titulo;
+    alertMessage.textContent = mensaje;
+    alertBtn.onclick = () => cerrarModal("modalAlertModern");
+    abrirModal("modalAlertModern");
+}
+
+const alertaInfo    = m => alerta("info","Información",m);
+const alertaExito   = m => alerta("success","Éxito",m);
+const alertaWarning = m => alerta("warning","Atención",m);
+const alertaError   = m => alerta("error","Error",m);
+
+function alertaConfirmacion(t,m,ok){
+    alerta("warning",t,m);
+    alertBtn.onclick = () => {
+        cerrarModal("modalAlertModern");
+        ok();
+    };
+}
 async function filtrarReporteFacturas() {
+
     const ini = document.getElementById("repInicio")?.value;
     const fin = document.getElementById("repFin")?.value;
 
     if (!ini || !fin) {
-        alert("Pon fecha inicio y fin.");
-        return;
+        return alertaWarning("Selecciona fecha inicio y fin");
     }
 
-    let tbody = document.querySelector("#tablaReporteFacturas tbody");
+    const tbody = document.querySelector("#tablaReporteFacturas tbody");
     if (!tbody) return;
 
     tbody.innerHTML = `<tr><td colspan="5">Buscando...</td></tr>`;
 
     try {
-        const res = await fetch(`/facturas/reportes/periodo?inicio=${ini}&fin=${fin}`);
-        if (!res.ok) throw new Error("No se pudo filtrar");
+        const res = await fetch(
+            `/facturas/reportes/periodo?inicio=${ini}&fin=${fin}`
+        );
 
-        const data = await res.json();
-        const lista = Array.isArray(data) ? data : [];
+        if (!res.ok) {
+            throw new Error("Error al filtrar");
+        }
+
+        const lista = await res.json();
 
         tbody.innerHTML = "";
 
-        if (lista.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5">No cayó nada en ese rango.</td></tr>`;
+        if (!lista.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5">No hay facturas en ese rango</td>
+                </tr>`;
             return;
         }
 
         lista.forEach(f => {
             const estado = (f.estado || "").toUpperCase();
-            const badge = estado === "ACTIVA" ? "badge-success" : "badge-danger";
-            const fecha = f.fecha ? String(f.fecha).replace("T", " ").substring(0, 16) : "-";
-            const total = Number(f.total || 0).toFixed(2);
+            const badge = estado === "ACTIVA"
+                ? "badge-success"
+                : "badge-danger";
+
+            const fecha = f.fecha
+                ? f.fecha.replace("T", " ").substring(0, 16)
+                : "-";
 
             tbody.innerHTML += `
                 <tr>
                     <td>${f.id}</td>
-                    <td>${f.cliente ?? ""}</td>
-                    <td>$${total}</td>
-                    <td><span class="badge ${badge}">${estado}</span></td>
+                    <td>${f.cliente || "-"}</td>
+                    <td>$${Number(f.total || 0).toFixed(2)}</td>
+                    <td>
+                        <span class="badge ${badge}">
+                            ${estado}
+                        </span>
+                    </td>
                     <td>${fecha}</td>
                 </tr>
             `;
         });
 
     } catch (e) {
-        console.error("filtrarReporteFacturas:", e);
-        tbody.innerHTML = `<tr><td colspan="5">No se pudo filtrar el reporte.</td></tr>`;
-        alert("Algo falló al filtrar. Intenta otra vez.");
+        console.error(e);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">Error al filtrar reporte</td>
+            </tr>`;
+        alertaError("No se pudo filtrar el reporte");
     }
-}
-
-function abrirModal(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "flex";
-}
-
-function cerrarModal(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
 }
