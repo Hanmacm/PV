@@ -27,7 +27,7 @@ public class CotizacionDetalle {
 private Cotizacion cotizacion;
 
 
-    // GETTERS Y SETTERS
+
     public Integer getId() { return id; }
 
     public Integer getProductoId() { return productoId; }
