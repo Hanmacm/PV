@@ -15,7 +15,7 @@ public class Producto {
     private Double precio;
     private Integer stock;
     private String codigo;
-     private String estado; // 👈 NUEVO
+     private String estado;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
