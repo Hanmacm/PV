@@ -5,97 +5,182 @@
 <title>Estadísticas - Punto de Venta</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="/css/PV.css">
+<link rel="stylesheet" href="/css/PVS.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
+
 <body>
 
 <div class="layout">
 
-    <aside class="sidebar-modern">
-        <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-              <small id="brandUserRol"></small>
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
 
-              <small>Sistema Punto de Venta</small>
-              <small>La Carpita</small>
-            </div>
-        </div>
+  <div class="brand-box">
+    <div class="brand-avatar">PV</div>
+    <div class="brand-info">
+      <strong class="brand-user" id="brandUserName">Usuario</strong>
+      <small id="brandUserRol"></small>
+      <small>Sistema Punto de Venta</small>
+      <small>La Carpita</small>
+    </div>
+  </div>
 
-        <nav class="menu-modern">
-            <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-            <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
-            <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
-            <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-            <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
-            <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-            <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-            <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-            <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
-            <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-            <a id="menuConsultas" href="/consultas" class="item"><i class="bi bi-search"></i> Consultas</a>
-            <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-            <a id="menuEstadisticas" href="/estadisticas" class="item active"><i class="bi bi-graph-up"></i> Estadísticas</a>
-            <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
-        </nav>
+  <nav class="menu-modern">
+    <a href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="/ventas" class="item"><i class="bi bi-shop"></i><span>Ventas</span></a>
+    <a href="/cotizaciones" class="item"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+    <a href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+    <a href="/compras" class="item"><i class="bi bi-cart"></i><span>Compras</span></a>
+    <a href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+    <a href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+    <a href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+    <a href="/usuarios" class="item"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+    <a href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+    <a href="/consultas" class="item"><i class="bi bi-search"></i><span>Consultas</span></a>
+    <a href="/reportes" class="item"><i class="bi bi-file-earmark-bar-graph"></i><span>Reportes</span></a>
+    <a href="/estadisticas" class="item active"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+    <a href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+  </nav>
 
-        <div class="logout-box">
-            <a href="#" onclick="cerrarSesion()" class="logout-btn">
-                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-            </a>
-        </div>
-    </aside>
+  <div class="logout-box">
+    <a href="#" onclick="cerrarSesion()" class="logout-btn">
+      <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
+    </a>
+  </div>
 
-    <main class="content">
-        <div class="content-header">
-            <h1>Estadísticas</h1>
-            <small>Resumen visual de ventas, compras y ganancias.</small>
-        </div>
+</aside>
 
-        <div class="dashboard-grid">
-            <div class="kpi" id="kpiVentas">
-                <h2>$0.00</h2>
-                <p>Total Ventas</p>
-            </div>
+<main class="content">
 
-            <div class="kpi" id="kpiCompras">
-                <h2>$0.00</h2>
-                <p>Total Compras</p>
-            </div>
+<header class="topbar-app">
 
-            <div class="kpi" id="kpiGanancias">
-                <h2>$0.00</h2>
-                <p>Ganancias</p>
-            </div>
-        </div>
+  <button class="hamburger-btn" onclick="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
 
-        <div class="card chart-card">
-            <h3>Ventas por mes</h3>
-            <canvas id="chartVentasMes"></canvas>
-        </div>
+  <div class="topbar-title">
+    <h1>Estadísticas</h1>
+    <small>Resumen visual del desempeño del sistema</small>
+  </div>
 
-        <div class="card chart-card">
-            <h3>Compras por mes</h3>
-            <canvas id="chartComprasMes"></canvas>
-        </div>
+</header>
 
-        <div class="card chart-card">
-            <h3>Ganancias por mes</h3>
-            <canvas id="chartGananciasMes"></canvas>
-        </div>
+<section class="card">
 
-        <div class="card chart-card">
-            <h3>Productos más vendidos</h3>
-            <canvas id="chartTopProductos"></canvas>
-        </div>
-    </main>
+  <h3>Filtrar estadísticas</h3>
+
+  <div class="row mt-10">
+    <div class="col-4">
+      <label>Desde</label>
+      <input type="date" id="estDesde">
+    </div>
+
+    <div class="col-4">
+      <label>Hasta</label>
+      <input type="date" id="estHasta">
+    </div>
+
+    <div class="col-4 flex-end">
+      <button class="btn btn-primary mt-20" onclick="filtrarEstadisticas()">
+        <i class="bi bi-funnel"></i> Aplicar
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<section class="card">
+
+  <h3>Indicadores generales</h3>
+
+  <div class="kpi-grid mt-10">
+    <div class="kpi-card kpi-blue">
+      <small>Total ventas</small>
+      <h3 id="kpiVentas">$0.00</h3>
+    </div>
+
+    <div class="kpi-card kpi-orange">
+      <small>Total compras</small>
+      <h3 id="kpiCompras">$0.00</h3>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <small>Ganancias</small>
+      <h3 id="kpiGanancias">$0.00</h3>
+    </div>
+  </div>
+
+</section>
+
+<section class="card mt-20">
+
+  <h3>Comparativa mensual</h3>
+
+  <div class="kpi-grid mt-10">
+    <div class="kpi-card kpi-blue">
+      <small>Ventas (vs mes anterior)</small>
+      <h3 id="cmpVentas">0%</h3>
+    </div>
+
+    <div class="kpi-card kpi-orange">
+      <small>Compras (vs mes anterior)</small>
+      <h3 id="cmpCompras">0%</h3>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <small>Ganancias (vs mes anterior)</small>
+      <h3 id="cmpGanancias">0%</h3>
+    </div>
+  </div>
+
+</section>
+
+<section class="card mt-20">
+  <h3>Ventas por mes</h3>
+  <canvas id="chartVentasMes"></canvas>
+</section>
+
+<section class="card mt-20">
+  <h3>Compras por mes</h3>
+  <canvas id="chartComprasMes"></canvas>
+</section>
+
+<section class="card mt-20">
+  <h3>Ganancias por mes</h3>
+  <canvas id="chartGananciasMes"></canvas>
+</section>
+
+<section class="card mt-20">
+  <h3>Productos más vendidos</h3>
+  <canvas id="chartTopProductos"></canvas>
+</section>
+
+</main>
+</div>
+
+<div class="modal-overlay" id="modalAlertModern">
+  <div class="alert-box" id="alertBox">
+
+    <div class="alert-icon" id="alertIcon">
+      <i class="bi bi-info-circle"></i>
+    </div>
+
+    <div class="alert-content">
+      <h3 id="alertTitle"></h3>
+      <p id="alertMessage"></p>
+    </div>
+
+    <button class="alert-btn" id="alertBtn">
+      Aceptar
+    </button>
+
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/core.js"></script>
-<script src="js/estadisticas.js"></script>
+<script src="/js/core.js"></script>
+<script src="/js/estadisticas.js"></script>
 
 </body>
 </html>
