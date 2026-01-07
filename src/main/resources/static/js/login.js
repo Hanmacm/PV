@@ -73,7 +73,8 @@ async function recuperarPass() {
     const u = recUser.value.trim();
 
     if (!u) {
-        alert("Escribe tu usuario para continuar");
+        mostrarAlerta("Escribe tu usuario para continuar");
+
         return;
     }
 
@@ -85,11 +86,13 @@ async function recuperarPass() {
         });
 
         const res = await r.json();
-        alert(res.mensaje);
+       mostrarAlerta(res.mensaje, "Recuperación de contraseña");
+
         cerrarModal();
 
     } catch {
-        alert("No se pudo completar la solicitud");
+        mostrarAlerta("No se pudo completar la solicitud", "Error");
+
     }
 }
 
@@ -108,3 +111,26 @@ document.head.insertAdjacentHTML("beforeend", `
 }
 </style>
 `);
+function mostrarAlerta(msg, titulo = "Aviso") {
+    alertTitulo.textContent = titulo;
+    alertMensaje.textContent = msg;
+    modalAlerta.style.display = "flex";
+}
+
+function cerrarAlerta() {
+    modalAlerta.style.display = "none";
+}
+function togglePassword() {
+    const pass = document.getElementById("loginPass");
+    const icon = document.getElementById("togglePass");
+
+    if (pass.type === "password") {
+        pass.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    } else {
+        pass.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+}
