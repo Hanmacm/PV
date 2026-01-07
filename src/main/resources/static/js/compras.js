@@ -1,62 +1,57 @@
 let provs = [];
 let prods = [];
-let cart = [];
+let cart  = [];
 let compras = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await getProv();
-    await getProd();
+    await loadProveedores();
+    await loadProductos();
     fillSelects();
     loadCompras();
     loadKPIs();
 
-    document.getElementById("btnCompAgregar").onclick = addItem;
-    document.getElementById("btnCompGuardar").onclick = saveCompra;
+    btnCompAgregar.onclick = addItem;
+    btnCompGuardar.onclick = saveCompra;
 });
 
-/* CARGAS INICIALES */
-async function getProv() {
+async function loadProveedores() {
     try {
-        provs = await (await fetch("/api/proveedores")).json();
+        provs = await ajaxGET("/api/proveedores");
     } catch {
         provs = [];
+        alertaError("No se pudieron cargar proveedores");
     }
 }
 
-async function getProd() {
+async function loadProductos() {
     try {
-        prods = await (await fetch("/api/productos/activos")).json();
+        prods = await ajaxGET("/api/productos/activos");
     } catch {
         prods = [];
+        alertaError("No se pudieron cargar productos");
     }
 }
 
 function fillSelects() {
-    const sp = document.getElementById("compProveedor");
-    const sd = document.getElementById("compProducto");
+    compProveedor.innerHTML = "";
+    compProducto.innerHTML = "";
 
-    sp.innerHTML = "";
-    sd.innerHTML = "";
+    provs.forEach(p =>
+        compProveedor.innerHTML += `<option value="${p.id}">${p.nombre}</option>`
+    );
 
-    provs.forEach(p => {
-        sp.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-    });
-
-    prods.forEach(p => {
-        sd.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-    });
+    prods.forEach(p =>
+        compProducto.innerHTML += `<option value="${p.id}">${p.nombre}</option>`
+    );
 }
 
-/* CARRITO */
 function addItem() {
-    const pid = Number(compProducto.value);
-    const cant = Number(compCantidad.value);
-    const cost = Number(compCosto.value);
+    const pid  = +compProducto.value;
+    const cant = +compCantidad.value;
+    const cost = +compCosto.value;
 
-    if (!pid || cant <= 0 || cost <= 0) {
-        alert("Revisa cantidad y costo");
-        return;
-    }
+    if (!pid || cant <= 0 || cost <= 0)
+        return alertaWarning("Revisa cantidad y costo");
 
     cart.push({ pid, cant, cost });
     drawCart();
@@ -66,7 +61,7 @@ function drawCart() {
     const tb = document.querySelector("#tablaCompra tbody");
     tb.innerHTML = "";
 
-    if (cart.length === 0) {
+    if (!cart.length) {
         tb.innerHTML = `<tr><td colspan="5">Sin productos</td></tr>`;
         compTotal.textContent = "$0.00";
         return;
@@ -81,7 +76,7 @@ function drawCart() {
 
         tb.innerHTML += `
         <tr>
-            <td>${p ? p.nombre : i.pid}</td>
+            <td>${p?.nombre || "Producto"}</td>
             <td>${i.cant}</td>
             <td>$${i.cost.toFixed(2)}</td>
             <td>$${imp.toFixed(2)}</td>
@@ -101,28 +96,16 @@ function delItem(i) {
     drawCart();
 }
 
-/* GUARDAR COMPRA */
 async function saveCompra() {
 
-    if (cart.length === 0) {
-        alert("Agrega productos primero");
-        return;
-    }
-
-    const folio = compFolio.value.trim();
-    const fecha = compFecha.value;
-    const provId = Number(compProveedor.value);
-
-    if (!folio || !fecha || !provId) {
-        alert("Completa los datos de la compra");
-        return;
-    }
+    if (!cart.length)
+        return alertaWarning("Agrega productos a la compra");
 
     const body = {
-        proveedorId: provId,
-        usuarioId: window.usuarioActual ? window.usuarioActual.id : 1,
-        folio,
-        fecha,
+        proveedorId: +compProveedor.value,
+        usuarioId: window.usuarioActual?.id || 1,
+        folio: compFolio.value.trim(),
+        fecha: compFecha.value,
         detalle: cart.map(x => ({
             productoId: x.pid,
             cantidad: x.cant,
@@ -130,14 +113,11 @@ async function saveCompra() {
         }))
     };
 
-    try {
-        const r = await fetch("/api/compras", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
+    if (!body.folio || !body.fecha)
+        return alertaWarning("Completa los datos de la compra");
 
-        if (!r.ok) throw "err";
+    try {
+        await ajaxPOST("/api/compras", body);
 
         cart = [];
         drawCart();
@@ -145,21 +125,20 @@ async function saveCompra() {
         loadCompras();
         loadKPIs();
 
-        alert("Compra registrada");
+        alertaExito("Compra registrada correctamente");
 
     } catch {
-        alert("No se pudo guardar la compra");
+        alertaError("No se pudo guardar la compra");
     }
 }
 
-/* LISTADO COMPRAS */
 async function loadCompras() {
     try {
-        compras = await (await fetch("/api/compras")).json();
+        compras = await ajaxGET("/api/compras");
         drawCompras();
     } catch {
         document.querySelector("#tablaCompras tbody").innerHTML =
-            `<tr><td colspan="6">Error al cargar</td></tr>`;
+            `<tr><td colspan="6">Error al cargar compras</td></tr>`;
     }
 }
 
@@ -174,114 +153,196 @@ function drawCompras() {
 
     compras.forEach(c => {
         const p = provs.find(x => x.id === c.proveedorId);
+        const cancelada = c.estado === "CANCELADA";
 
         tb.innerHTML += `
-        <tr>
+        <tr data-id="${c.id}">
             <td>${c.folio}</td>
-            <td>${p ? p.nombre : "N/D"}</td>
+            <td>${p?.nombre || "N/D"}</td>
             <td>$${Number(c.total).toFixed(2)}</td>
-            <td>${c.fecha?.replace("T", " ")}</td>
+            <td>${c.fecha?.replace("T"," ").substring(0,16)}</td>
             <td>
-                <span class="badge ${c.estado === "CANCELADA" ? "badge-danger" : "badge-success"}">
+                <span class="badge ${cancelada ? "badge-danger" : "badge-success"}">
                     ${c.estado}
                 </span>
             </td>
             <td>
-                <button class="btn btn-info btn-sm" onclick="verDetalle(${c.id})">
+                <button class="btn btn-info btn-sm"
+                    onclick="verDetalle(${c.id})">
                     <i class="bi bi-eye"></i>
                 </button>
+
                 <button class="btn btn-danger btn-sm"
                     onclick="cancelCompra(${c.id})"
-                    ${c.estado === "CANCELADA" ? "disabled" : ""}>
+                    ${cancelada ? "disabled" : ""}>
                     <i class="bi bi-x-circle"></i>
                 </button>
             </td>
         </tr>`;
     });
+    resaltarDesdeConsulta();
+
 }
 
-/* CANCELAR */
-async function cancelCompra(id) {
-
-    if (!confirm("¿Cancelar esta compra?")) return;
+async function verDetalle(id) {
+    abrirModal("modalDetalleCompra");
 
     try {
-        const r = await fetch(`/api/compras/cancelar/${id}`, { method: "PUT" });
-        if (!r.ok) throw "err";
+        const d = await ajaxGET(`/api/compras/${id}/detalle`);
+        const tb = document.getElementById("detalleCompraTabla");
+        tb.innerHTML = "";
 
-        loadCompras();
-        loadKPIs();
-        alert("Compra cancelada");
+        if (!d.length) {
+            tb.innerHTML = `<tr><td colspan="4">Sin productos</td></tr>`;
+            return;
+        }
+
+        d.forEach(x => {
+            tb.innerHTML += `
+            <tr>
+                <td>${x.producto}</td>
+                <td>${x.cantidad}</td>
+                <td>$${Number(x.costo).toFixed(2)}</td>
+                <td>$${Number(x.subtotal).toFixed(2)}</td>
+            </tr>`;
+        });
 
     } catch {
-        alert("No se pudo cancelar");
+        alertaError("No se pudo cargar el detalle");
     }
 }
 
-/* FILTROS */
+function cancelCompra(id) {
+
+    alertaConfirmacion(
+        "Cancelar compra",
+        "¿Deseas cancelar esta compra?",
+        async () => {
+            try {
+                await fetch(`/api/compras/cancelar/${id}`, { method:"PUT" });
+                loadCompras();
+                loadKPIs();
+                alertaWarning("Compra cancelada");
+            } catch {
+                alertaError("No se pudo cancelar");
+            }
+        }
+    );
+}
+
+function abrirModalBuscarCompras() {
+    abrirModal("modalBuscarCompras");
+}
+
 async function comprasHoy() {
-    compras = await (await fetch("/api/compras/hoy")).json();
-    drawCompras();
+    try {
+        compras = await ajaxGET("/api/compras/hoy");
+        drawCompras();
+    } catch {
+        alertaError("No se pudieron cargar compras de hoy");
+    }
 }
 
 async function comprasPorFecha() {
     const f = filtroFechaCompra.value;
-    if (!f) return alert("Selecciona fecha");
+    if (!f) return alertaWarning("Selecciona una fecha");
 
-    compras = await (await fetch(`/api/compras/fecha?fecha=${f}`)).json();
-    drawCompras();
+    try {
+        compras = await ajaxGET(`/api/compras/fecha?fecha=${f}`);
+        drawCompras();
+    } catch {
+        alertaError("No se pudieron cargar las compras");
+    }
 }
 
-/* DETALLE */
-async function verDetalle(id) {
-    abrirModal("modalDetalleCompra");
-
-    const r = await fetch(`/api/compras/${id}/detalle`);
-    const d = await r.json();
-
-    const tb = document.getElementById("detalleCompraTabla");
-    tb.innerHTML = "";
-
-    d.forEach(x => {
-        tb.innerHTML += `
-        <tr>
-            <td>${x.producto}</td>
-            <td>${x.cantidad}</td>
-            <td>$${x.costo}</td>
-            <td>$${x.subtotal}</td>
-        </tr>`;
-    });
-}
-
-/* KPIs Y REPORTES*/
 async function loadKPIs() {
     try {
-        const d = await (await fetch("/api/compras/reporte")).json();
+        const d = await ajaxGET("/api/compras/reporte");
         paintKPIs(d);
     } catch {}
 }
 
-async function cargarReporteGeneral() {
-    const d = await (await fetch("/api/compras/reporte")).json();
-    paintKPIs(d);
-}
-
 async function cargarReportePeriodo() {
-    const i = repInicio.value;
-    const f = repFin.value;
+    if (!repInicio.value || !repFin.value)
+        return alertaWarning("Selecciona rango de fechas");
 
-    if (!i || !f) return alert("Selecciona fechas");
-
-    const d = await (
-        await fetch(`/api/compras/reporte/periodo?inicio=${i}&fin=${f}`)
-    ).json();
-
-    paintKPIs(d);
+    try {
+        const d = await ajaxGET(
+            `/api/compras/reporte/periodo?inicio=${repInicio.value}&fin=${repFin.value}`
+        );
+        paintKPIs(d);
+    } catch {
+        alertaError("No se pudo generar el reporte");
+    }
 }
 
 function paintKPIs(d) {
     kpiTotalCompras.textContent = d.totalCompras ?? 0;
-    kpiMontoTotal.textContent = "$" + Number(d.montoTotal ?? 0).toFixed(2);
-    kpiRegistradas.textContent = d.comprasRegistradas ?? 0;
-    kpiCanceladas.textContent = d.comprasCanceladas ?? 0;
+    kpiMontoTotal.textContent   = "$" + Number(d.montoTotal ?? 0).toFixed(2);
+    kpiCanceladas.textContent   = d.comprasCanceladas ?? 0;
+}
+
+function alerta(tipo, titulo, mensaje) {
+
+    const box   = document.getElementById("alertBox");
+    const icon  = document.getElementById("alertIcon");
+    const title = document.getElementById("alertTitle");
+    const msg   = document.getElementById("alertMessage");
+    const btn   = document.getElementById("alertBtn");
+
+    const icons = {
+        info: "bi-info-circle",
+        success: "bi-check-circle",
+        error: "bi-x-circle",
+        warning: "bi-exclamation-triangle"
+    };
+
+    box.className = `alert-box alert-${tipo}`;
+    icon.innerHTML = `<i class="bi ${icons[tipo]}"></i>`;
+    title.textContent = titulo;
+    msg.textContent = mensaje;
+
+    btn.onclick = () => cerrarModal("modalAlertModern");
+
+    abrirModal("modalAlertModern");
+}
+
+const alertaInfo    = m => alerta("info",    "Información", m);
+const alertaExito   = m => alerta("success", "Éxito", m);
+const alertaError   = m => alerta("error",   "Error", m);
+const alertaWarning = m => alerta("warning", "Atención", m);
+
+function alertaConfirmacion(titulo, mensaje, onAceptar) {
+
+    alerta("warning", titulo, mensaje);
+
+    const btn = document.getElementById("alertBtn");
+
+    btn.onclick = () => {
+        cerrarModal("modalAlertModern");
+        if (typeof onAceptar === "function") {
+            onAceptar();
+        }
+    };
+}
+function resaltarDesdeConsulta() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("resaltar");
+    if (!id) return;
+
+    setTimeout(() => {
+        const fila = document.querySelector(
+            `#tablaCompras tbody tr[data-id="${id}"]`
+        );
+
+        if (fila) {
+            fila.classList.add("resaltado");
+            fila.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        history.replaceState({}, document.title, location.pathname);
+    }, 100);
 }
