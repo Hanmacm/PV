@@ -6,144 +6,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="css/PV.css">
+<link rel="stylesheet" href="css/PVS.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
 </head>
-<style>
-.result-section {
-    background: #ffffff;
-    padding: 18px 22px;
-    border-radius: 12px;
-    margin-top: 20px;
-    border-left: 5px solid #0066ff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.result-section h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 18px;
-    color: #0048c5;
-    margin-bottom: 12px;
-}
-
-
-.result-section h3 i {
-    font-size: 20px;
-    color: #0066ff;
-}
-
-
-.result-list {
-    list-style: none;
-    padding-left: 0;
-}
-
-.result-list li {
-    background: #f7faff;
-    padding: 12px 14px;
-    margin: 6px 0;
-    border-radius: 8px;
-    border: 1px solid #d8e7ff;
-    transition: 0.15s;
-}
-
-.result-list li:hover {
-    background: #e9f1ff;
-    transform: translateX(4px);
-}
-
-
-.no-results {
-    padding: 15px;
-    text-align: center;
-    font-style: italic;
-    color: #777;
-}
-
-
-#consultaTxt {
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #cfd8e3;
-    width: 100%;
-    margin-bottom: 20px;
-    font-size: 15px;
-    background: #f8faff;
-}
-
-#consultaTxt:focus {
-    border-color: #0066ff;
-    outline: none;
-    background: #ffffff;
-}
-</style>
 
 <body>
 
-<div class="layout">
+<aside class="sidebar-modern sidebar-collapsed" id="sidebar">
 
+  <div class="brand-box">
+    <div class="brand-avatar">PV</div>
+    <div class="brand-info">
+      <strong class="brand-user" id="brandUserName">Usuario</strong>
+      <small>Sistema Punto de Venta</small>
+      <small>La Carpita</small>
+    </div>
+  </div>
 
-  <aside class="sidebar-modern">
- <div class="brand-box">
-            <div class="brand-avatar">PV</div>
-            <div>
-              <strong class="brand-user" id="brandUserName">Usuario</strong>
-<small id="brandUserRol"></small>
+  <nav class="menu-modern">
+    <a href="/inicio" class="item"><i class="bi bi-house"></i><span>Inicio</span></a>
+    <a href="/ventas" class="item"><i class="bi bi-shop"></i><span>Ventas</span></a>
+    <a href="/cotizaciones" class="item"><i class="bi bi-file-text"></i><span>Cotizaciones</span></a>
+    <a href="/pedidos" class="item"><i class="bi bi-people"></i><span>Pedidos</span></a>
+    <a href="/compras" class="item"><i class="bi bi-cart"></i><span>Compras</span></a>
+    <a href="/productos" class="item"><i class="bi bi-box"></i><span>Productos</span></a>
+    <a href="/clientes" class="item"><i class="bi bi-person"></i><span>Clientes</span></a>
+    <a href="/cajas" class="item"><i class="bi bi-cash-stack"></i><span>Cajas</span></a>
+    <a href="/usuarios" class="item"><i class="bi bi-person-badge"></i><span>Usuarios</span></a>
+    <a href="/proveedores" class="item"><i class="bi bi-truck"></i><span>Proveedores</span></a>
+    <a href="/consultas" class="item active"><i class="bi bi-search"></i><span>Consultas</span></a>
+    <a href="/reportes" class="item"><i class="bi bi-file-earmark"></i><span>Reportes</span></a>
+    <a href="/estadisticas" class="item"><i class="bi bi-graph-up"></i><span>Estadísticas</span></a>
+    <a href="/facturacion" class="item"><i class="bi bi-receipt"></i><span>Facturación</span></a>
+  </nav>
 
-                <small>Sistema Punto de Venta</small>
-                <small>La Carpita</small>
-            </div>
-        </div>
-
-    <nav class="menu-modern">
-    <a id="menuInicio" href="/inicio" class="item"><i class="bi bi-house"></i> Inicio</a>
-    <a id="menuVentas" href="/ventas" class="item"><i class="bi bi-shop"></i> Ventas</a>
-    <a id="menuCotizaciones" href="/cotizaciones" class="item"><i class="bi bi-file-text"></i> Cotizaciones</a>
-    <a id="menuPedidos" href="/pedidos" class="item"><i class="bi bi-people"></i> Pedidos</a>
-    <a id="menuCompras" href="/compras" class="item"><i class="bi bi-cart"></i> Compras</a>
-    <a id="menuProductos" href="/productos" class="item"><i class="bi bi-box"></i> Productos</a>
-    <a id="menuClientes" href="/clientes" class="item"><i class="bi bi-person"></i> Clientes</a>
-    <a id="menuCajas" href="/cajas" class="item"><i class="bi bi-cash-stack"></i> Cajas</a>
-    <a id="menuUsuarios" href="/usuarios" class="item"><i class="bi bi-person-badge"></i> Usuarios</a>
-    <a id="menuProveedores" href="/proveedores" class="item"><i class="bi bi-truck"></i> Proveedores</a>
-    <a id="menuConsultas" href="/consultas" class="item  active"><i class="bi bi-search"></i> Consultas</a>
-    <a id="menuReportes" href="/reportes" class="item"><i class="bi bi-file-earmark"></i> Reportes</a>
-    <a id="menuEstadisticas" href="/estadisticas" class="item"><i class="bi bi-graph-up"></i> Estadísticas</a>
-    <a id="menuFacturacion" href="/facturacion" class="item"><i class="bi bi-receipt"></i> Facturación</a>
-    
-</nav>
-
-
-     <div class="logout-box">
+  <div class="logout-box">
     <a href="#" onclick="cerrarSesion()" class="logout-btn">
-        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+      <i class="bi bi-box-arrow-right"></i> <span>Cerrar sesión</span>
     </a>
+  </div>
+
+</aside>
+
+<main class="content">
+
+<header class="topbar-app">
+
+  <button class="hamburger-btn" onclick="toggleSidebar()">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="topbar-title">
+    <h1>Consultas</h1>
+    <small>Búsqueda global en todo el sistema</small>
+  </div>
+
+  <div class="topbar-actions">
+    <button class="btn btn-outline" onclick="consultaTxt.value=''; consultaResultados.innerHTML=''">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+
+</header>
+
+<section class="card">
+
+  <h3><i class="bi bi-search"></i> Consulta global</h3>
+
+  <label>Buscar</label>
+  <input
+    id="consultaTxt"
+    placeholder="Cliente, producto, folio, venta, proveedor..."
+    onkeyup="buscarConsultar()"
+    class="input-search"
+  >
+
+  <div id="consultaResultados" class="mt-15"></div>
+
+</section>
+
+</main>
+
+<div class="modal-overlay" id="modalAlertModern">
+  <div class="alert-box" id="alertBox">
+
+    <div class="alert-icon" id="alertIcon">
+      <i class="bi bi-info-circle"></i>
+    </div>
+
+    <div class="alert-content">
+      <h3 id="alertTitle">Información</h3>
+      <p id="alertMessage">Mensaje</p>
+    </div>
+
+    <button class="alert-btn" onclick="cerrarModal('modalAlertModern')">
+      Aceptar
+    </button>
+
+  </div>
 </div>
-
-
-    </aside>
-   
-    <main class="content">
-        
-        <div class="content-header">
-            <h1>Consultas Globales</h1>
-            <small>Busca en todos los módulos rápidamente.</small>
-        </div>
-
-        <div class="card">
-
-            <label>Buscar</label>
-            <input id="consultaTxt" placeholder="Ej: Pedro, Coca, Venta 5, Folio, Empresa..." onkeyup="buscarConsultar()">
-
-            <div id="consultaResultados" class="mt-15"></div>
-
-        </div>
-
-    </main>
-</div>
-
 
 <script src="js/core.js"></script>
 <script src="js/consultas.js"></script>
