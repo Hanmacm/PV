@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Login - La Carpita</title>
+<title>Login - Punto de Venta</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="css/login.css">
@@ -27,7 +27,11 @@
         <input id="loginUser">
 
         <label>Contraseña</label>
-        <input id="loginPass" type="password" placeholder="●●●●●">
+<div class="input-pass">
+    <input id="loginPass" type="password" placeholder="●●●●●">
+    <i id="togglePass" class="bi bi-eye" onclick="togglePassword()"></i>
+</div>
+
 
         <button onclick="iniciar()" class="btn-login">Iniciar sesión</button>
 
@@ -54,6 +58,15 @@
         </button>
 
         <button class="btn-close" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+
+<div id="modalAlerta" class="modal-fondo">
+    <div class="modal-box">
+        <h3 id="alertTitulo">Aviso</h3>
+        <p id="alertMensaje"></p>
+
+        <button class="btn-login" onclick="cerrarAlerta()">Aceptar</button>
     </div>
 </div>
 
